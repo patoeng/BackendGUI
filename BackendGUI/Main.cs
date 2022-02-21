@@ -37,7 +37,7 @@ namespace BackendGUI
             Tb_SetupAvailability.Text = "";
 
             this.WindowState = FormWindowState.Normal;
-            this.Size = new Size(1250, 660);
+            this.Size = new Size(1250, 700);
             MyTitle.Text = $"Backend - {AppSettings.Resource}";
             ResourceGrouping.Values.Heading = $"Resource Status: {AppSettings.Resource}";
             ResourceSetupGrouping.Values.Heading = $"Resource Setup: {AppSettings.Resource}";
@@ -48,6 +48,7 @@ namespace BackendGUI
         #region INSTANCE VARIABLE
         private static GetMaintenanceStatusDetails[] oMaintenanceStatus = null;
         private static ServiceUtil oServiceUtil = new ServiceUtil();
+        private static DateTime dMoveIn;
         #endregion
 
         #region FUNCTION STATUS OF RESOURCE
@@ -144,7 +145,10 @@ namespace BackendGUI
         private void Bt_FindContainer_Click(object sender, EventArgs e)
         {
             Lb_MaterialList.Items.Clear();
-            CurrentContainerStatus oContainerStatus =  oServiceUtil.GetContainerStatusDetails(Tb_SerialNumber.Text);
+            Tb_Operation.Clear();
+            Tb_PO.Clear();
+            CurrentContainerStatus oContainerStatus =  oServiceUtil.GetContainerStatusDetails(Tb_SerialNumber.Text, "Backend Minime");
+            Tb_ContainerPosition.Text = oServiceUtil.GetCurrentContainerStep(Tb_SerialNumber.Text);
             if (oContainerStatus != null)
             {
                 GroupofMaterial.Values.Heading = $"Material: {oContainerStatus.ContainerName.Value}";
@@ -162,6 +166,10 @@ namespace BackendGUI
                             }
                         }
                     }
+                    if (oContainerStatus.MfgOrderName != null) Tb_PO.Text = oContainerStatus.MfgOrderName.ToString();
+                    if (oContainerStatus.Operation != null) Tb_Operation.Text = oContainerStatus.Operation.Name.ToString();
+                    dMoveIn = DateTime.Now;
+                    Dt_MoveIn.Value = dMoveIn;
                 }
             }
         }
@@ -176,13 +184,20 @@ namespace BackendGUI
                 cDataPoint[1] = new Camstar.WCF.ObjectStack.DataPointDetails() { DataName = "Color Box Serial Number", DataValue = Tb_ColorBoxSerialNumber.Text, DataType = DataTypeEnum.String };
                 cDataPoint[2] = new Camstar.WCF.ObjectStack.DataPointDetails() { DataName = "Carton Box Serial Number", DataValue = Tb_CartonSerialNumber.Text, DataType = DataTypeEnum.String };
                 cDataPoint[3] = new Camstar.WCF.ObjectStack.DataPointDetails() { DataName = "Label Serial Number", DataValue = Tb_LabelSerialNumber.Text, DataType = DataTypeEnum.String };
-                if (Tb_SerialNumber.Text != "")
+                CurrentContainerStatus oContainerStatus = oServiceUtil.GetContainerStatusDetails(Tb_SerialNumber.Text, "Backend Minime");
+                if (oContainerStatus != null)
                 {
-                    resultMoveIn = oServiceUtil.ExecuteMoveIn(Tb_SerialNumber.Text, AppSettings.Resource, "Backend Data", "", cDataPoint);
+                    resultMoveIn = oServiceUtil.ExecuteMoveIn(Tb_SerialNumber.Text, AppSettings.Resource, "", "", null, "", false, false, "", "", Convert.ToString(dMoveIn));
                     if (resultMoveIn)
                     {
-                        resultMoveStd = oServiceUtil.ExecuteMoveStd(Tb_SerialNumber.Text, "", AppSettings.Resource);
-                        if (resultMoveStd) MessageBox.Show("MoveIn and MoveStd success!");
+                        resultMoveStd = oServiceUtil.ExecuteMoveStd(Tb_SerialNumber.Text, "", "", "Backend Minime", "", cDataPoint, "", false, "", "", Convert.ToString(DateTime.Now));
+                        if (resultMoveStd)
+                        {
+                            oContainerStatus = oServiceUtil.GetContainerStatusDetails(Tb_SerialNumber.Text, "Backend Minime");
+                            Tb_ContainerPosition.Text = oServiceUtil.GetCurrentContainerStep(Tb_SerialNumber.Text);
+                            if (oContainerStatus.Operation != null) Tb_Operation.Text = oContainerStatus.Operation.Name.ToString();
+                            MessageBox.Show($"MoveIn and MoveStd success! Move to the Operation: {oContainerStatus.OperationName.Value}.");
+                        }
                         else MessageBox.Show("Move In success and but Move Std Fail!");
                     }
                     else MessageBox.Show("Move In and Move Std Fail!");
