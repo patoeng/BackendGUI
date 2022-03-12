@@ -90,6 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enumeration\BackEndState.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -130,5 +131,12 @@
   <ItemGroup>
     <None Include="Resources\WIK logo.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\MesData\MesData\MesData.csproj">
+      <Project>{47a21ecb-4762-4320-8946-4a7226c0085b}</Project>
+      <Name>MesData</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
