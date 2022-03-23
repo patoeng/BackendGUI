@@ -39,7 +39,7 @@ namespace BackendGUI
           
 
             WindowState = FormWindowState.Normal;
-            Size = new Size(820, 830);
+            Size = new Size(820, 716);
             MyTitle.Text = $"Backend - {AppSettings.Resource}";
             ResourceGrouping.Values.Heading = $"Resource Status: {AppSettings.Resource}";
             ResourceDataGroup.Values.Heading = $"Resource Data Collection: {AppSettings.Resource}";
@@ -69,11 +69,9 @@ namespace BackendGUI
                     Tb_ContainerPosition.Clear();
                     Tb_CartonSerialNumber.Clear();
                     Tb_ColorBoxSerialNumber.Clear();
-                    Tb_ProductSerialNumber.Clear();
-                    Tb_LabelSerialNumber.Clear();
                     Tb_SerialNumber.Clear();
                     Lb_MaterialList.Items.Clear();
-                    GroupofMaterial.Values.Heading = "Material -";
+                    GroupofMaterial.Values.Heading = @"Material -";
 
                     if (_mesData.ResourceStatusDetails == null || _mesData.ResourceStatusDetails?.Availability != "Up")
                     {
@@ -83,28 +81,28 @@ namespace BackendGUI
 
                     Tb_Scanner.Enabled = true;
                     lblCommand.ForeColor = Color.LimeGreen;
-                    lblCommand.Text = "Scan Unit Serial Number!";
+                    lblCommand.Text = @"Scan Unit Serial Number!";
                     ActiveControl = Tb_Scanner;
                     break;
                 case BackEndState.CheckUnitStatus:
                     Tb_Scanner.Enabled = false;
-                    lblCommand.Text = "Checking Unit Status";
+                    lblCommand.Text = @"Checking Unit Status";
 
-                    CurrentContainerStatus oContainerStatus = await Mes.GetContainerStatusDetails(_mesData, Tb_SerialNumber.Text, _mesData.DataCollectionName);
+                    var oContainerStatus = await Mes.GetContainerStatusDetails(_mesData, Tb_SerialNumber.Text, _mesData.DataCollectionName);
                     Tb_ContainerPosition.Text = await Mes.GetCurrentContainerStep(_mesData, Tb_SerialNumber.Text);
                     if (oContainerStatus != null)
                     {
                         if (oContainerStatus.MfgOrderName != null) Tb_PO.Text = oContainerStatus.MfgOrderName.ToString();
                         if (oContainerStatus.Operation != null) Tb_Operation.Text = oContainerStatus.Operation.Name;
-                        if (oContainerStatus.Operation.Name != _mesData.DataCollectionName)
+                        if (oContainerStatus.Operation?.Name != _mesData.DataCollectionName)
                         {
                             await SetBackendState(BackEndState.WrongPosition);
                             break;
                         }
-                        GroupofMaterial.Values.Heading = $"Material: {oContainerStatus.ContainerName.Value}";
-                        if (oContainerStatus.MfgOrderName.ToString() != "")
+                        GroupofMaterial.Values.Heading = $@"Material: {oContainerStatus.ContainerName.Value}";
+                        if (oContainerStatus.MfgOrderName?.ToString() != "")
                         {
-                            var mfgOrder = await Mes.GetMfgOrder(_mesData, oContainerStatus.MfgOrderName.ToString());
+                            var mfgOrder = await Mes.GetMfgOrder(_mesData, oContainerStatus.MfgOrderName?.ToString());
                             if (mfgOrder != null)
                             {
                                 if (mfgOrder.MaterialList.Length > 0)
@@ -120,7 +118,7 @@ namespace BackendGUI
                         }
 
                         _dMoveIn = DateTime.Now;
-                        await SetBackendState(BackEndState.ScanProductSerialNumber);
+                        await SetBackendState(BackEndState.ScanColorBoxSerialNumber);
                         break;
                     }
                     await SetBackendState(BackEndState.UnitNotFound);
@@ -128,32 +126,32 @@ namespace BackendGUI
                 case BackEndState.UnitNotFound:
                     Tb_Scanner.Enabled = false;
                     lblCommand.ForeColor = Color.Red;
-                    lblCommand.Text = "Unit Not Found";
+                    lblCommand.Text = @"Unit Not Found";
                     break;
                 case BackEndState.ScanProductSerialNumber:
                     Tb_Scanner.Enabled = true;
-                    lblCommand.Text = "Scan Product Serial Number!";
+                    lblCommand.Text = @"Scan Product Serial Number!";
                     break;
                 case BackEndState.ScanColorBoxSerialNumber:
                     Tb_Scanner.Enabled = true;
-                    lblCommand.Text = "Scan Color Box Serial Number!";
+                    lblCommand.Text = @"Scan Color Box Serial Number!";
                     break;
                 case BackEndState.ScanCartonBoxSerialNumber:
                     Tb_Scanner.Enabled = true;
-                    lblCommand.Text = "Scan Carton Box Serial Number!";
+                    lblCommand.Text = @"Scan Carton Box Serial Number!";
                     break;
                 case BackEndState.ScanLabelSerialNumber:
                     Tb_Scanner.Enabled = true;
-                    lblCommand.Text = "Scan Label Serial Number!";
+                    lblCommand.Text = @"Scan Label Serial Number!";
                     break;
                 case BackEndState.UpdateMoveInMove:
                     Tb_Scanner.Enabled = false;
-                    lblCommand.Text = "Container Move In";
-                    var cDataPoint = new DataPointDetails[4];
-                    cDataPoint[0] = new DataPointDetails { DataName = "Product Serial Number", DataValue = Tb_ProductSerialNumber.Text, DataType = DataTypeEnum.String };
-                    cDataPoint[1] = new DataPointDetails { DataName = "Color Box Serial Number", DataValue = Tb_ColorBoxSerialNumber.Text, DataType = DataTypeEnum.String };
-                    cDataPoint[2] = new DataPointDetails { DataName = "Carton Box Serial Number", DataValue = Tb_CartonSerialNumber.Text, DataType = DataTypeEnum.String };
-                    cDataPoint[3] = new DataPointDetails { DataName = "Label Serial Number", DataValue = Tb_LabelSerialNumber.Text, DataType = DataTypeEnum.String };
+                    lblCommand.Text = @"Container Move In";
+                    var cDataPoint = new DataPointDetails[2];
+                   
+                    cDataPoint[0] = new DataPointDetails { DataName = "Color Box Serial Number", DataValue = Tb_ColorBoxSerialNumber.Text, DataType = DataTypeEnum.String };
+                    cDataPoint[1] = new DataPointDetails { DataName = "Carton Box Serial Number", DataValue = Tb_CartonSerialNumber.Text, DataType = DataTypeEnum.String };
+                    
                     oContainerStatus = await Mes.GetContainerStatusDetails(_mesData, Tb_SerialNumber.Text, _mesData.DataCollectionName);
                     if (oContainerStatus != null)
                     {
@@ -161,7 +159,7 @@ namespace BackendGUI
                             _dMoveIn, 15000);
                         if (resultMoveIn)
                         {
-                            lblCommand.Text = "Container Move Standard";
+                            lblCommand.Text = @"Container Move Standard";
                             var resultMoveStd = await Mes.ExecuteMoveStandard(_mesData, oContainerStatus.ContainerName.Value, DateTime.Now, cDataPoint, 30000);
                             await SetBackendState(resultMoveStd
                                 ? BackEndState.ScanUnitSerialNumber
@@ -175,22 +173,20 @@ namespace BackendGUI
                 case BackEndState.MoveInOkMoveFail:
                     lblCommand.ForeColor = Color.Red;
                     Tb_Scanner.Enabled = false;
-                    lblCommand.Text = "Move Standard Fail";
+                    lblCommand.Text = @"Move Standard Fail";
                     break;
                 case BackEndState.MoveInFail:
                     lblCommand.ForeColor = Color.Red;
                     Tb_Scanner.Enabled = false;
-                    lblCommand.Text = "Move In Fail";
+                    lblCommand.Text = @"Move In Fail";
                     break;
                 case BackEndState.Done:
                     break;
                 case BackEndState.WrongPosition:
                     lblCommand.ForeColor = Color.Red;
                     Tb_Scanner.Enabled = false;
-                    lblCommand.Text = "Incorrect Product Operation";
+                    lblCommand.Text = @"Incorrect Product Operation";
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -310,11 +306,6 @@ namespace BackendGUI
                     Tb_SerialNumber.Text = Tb_Scanner.Text;
                     await SetBackendState(BackEndState.CheckUnitStatus);
                     break;
-                case BackEndState.ScanProductSerialNumber:
-                    Tb_ProductSerialNumber.Text = Tb_Scanner.Text;
-                    Tb_Scanner.Clear();
-                    await SetBackendState(BackEndState.ScanColorBoxSerialNumber);
-                    break;
                 case BackEndState.ScanColorBoxSerialNumber:
                     Tb_ColorBoxSerialNumber.Text = Tb_Scanner.Text;
                     Tb_Scanner.Clear();
@@ -322,11 +313,6 @@ namespace BackendGUI
                     break;
                 case BackEndState.ScanCartonBoxSerialNumber:
                     Tb_CartonSerialNumber.Text = Tb_Scanner.Text;
-                    Tb_Scanner.Clear();
-                    await SetBackendState(BackEndState.ScanLabelSerialNumber);
-                    break;
-                case BackEndState.ScanLabelSerialNumber:
-                    Tb_LabelSerialNumber.Text = Tb_Scanner.Text;
                     Tb_Scanner.Clear();
                     await SetBackendState(BackEndState.UpdateMoveInMove);
                     break;

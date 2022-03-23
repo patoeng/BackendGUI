@@ -35,15 +35,11 @@ namespace BackendGUI
             this.label7 = new System.Windows.Forms.Label();
             this.Tb_SerialNumber = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
             this.Lb_MaterialList = new ComponentFactory.Krypton.Toolkit.KryptonListBox();
-            this.Tb_ProductSerialNumber = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
-            this.label11 = new System.Windows.Forms.Label();
             this.Tb_CartonSerialNumber = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.ResourceDataGroup = new ComponentFactory.Krypton.Toolkit.KryptonGroupBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.Tb_LabelSerialNumber = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
             this.Tb_PO = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
-            this.label4 = new System.Windows.Forms.Label();
             this.label30 = new System.Windows.Forms.Label();
             this.Tb_ContainerPosition = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
             this.Tb_ColorBoxSerialNumber = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
@@ -107,7 +103,7 @@ namespace BackendGUI
             // pictureBox1
             // 
             this.pictureBox1.Image = global::BackendGUI.Properties.Resources.WIK_logo;
-            this.pictureBox1.Location = new System.Drawing.Point(646, 24);
+            this.pictureBox1.Location = new System.Drawing.Point(649, 9);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(133, 52);
@@ -168,39 +164,10 @@ namespace BackendGUI
             this.Lb_MaterialList.StateNormal.Border.Width = 1;
             this.Lb_MaterialList.TabIndex = 40;
             // 
-            // Tb_ProductSerialNumber
-            // 
-            this.Tb_ProductSerialNumber.Enabled = false;
-            this.Tb_ProductSerialNumber.Location = new System.Drawing.Point(4, 96);
-            this.Tb_ProductSerialNumber.Name = "Tb_ProductSerialNumber";
-            this.Tb_ProductSerialNumber.Size = new System.Drawing.Size(186, 35);
-            this.Tb_ProductSerialNumber.StateCommon.Back.Color1 = System.Drawing.Color.White;
-            this.Tb_ProductSerialNumber.StateCommon.Border.Color1 = System.Drawing.Color.Black;
-            this.Tb_ProductSerialNumber.StateCommon.Border.Color2 = System.Drawing.Color.Black;
-            this.Tb_ProductSerialNumber.StateCommon.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
-            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
-            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right)));
-            this.Tb_ProductSerialNumber.StateCommon.Border.GraphicsHint = ComponentFactory.Krypton.Toolkit.PaletteGraphicsHint.AntiAlias;
-            this.Tb_ProductSerialNumber.StateCommon.Border.Rounding = 20;
-            this.Tb_ProductSerialNumber.StateCommon.Border.Width = 1;
-            this.Tb_ProductSerialNumber.StateCommon.Content.Color1 = System.Drawing.Color.Gray;
-            this.Tb_ProductSerialNumber.TabIndex = 43;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.ForeColor = System.Drawing.Color.Gray;
-            this.label11.Location = new System.Drawing.Point(8, 77);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(149, 16);
-            this.label11.TabIndex = 42;
-            this.label11.Text = "Product Serial Number :";
-            // 
             // Tb_CartonSerialNumber
             // 
             this.Tb_CartonSerialNumber.Enabled = false;
-            this.Tb_CartonSerialNumber.Location = new System.Drawing.Point(392, 96);
+            this.Tb_CartonSerialNumber.Location = new System.Drawing.Point(196, 87);
             this.Tb_CartonSerialNumber.Name = "Tb_CartonSerialNumber";
             this.Tb_CartonSerialNumber.Size = new System.Drawing.Size(186, 35);
             this.Tb_CartonSerialNumber.StateCommon.Back.Color1 = System.Drawing.Color.White;
@@ -220,7 +187,7 @@ namespace BackendGUI
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.Gray;
-            this.label2.Location = new System.Drawing.Point(401, 77);
+            this.label2.Location = new System.Drawing.Point(205, 68);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(168, 16);
             this.label2.TabIndex = 44;
@@ -228,15 +195,14 @@ namespace BackendGUI
             // 
             // ResourceDataGroup
             // 
-            this.ResourceDataGroup.Location = new System.Drawing.Point(8, 355);
+            this.ResourceDataGroup.Location = new System.Drawing.Point(3, 254);
             this.ResourceDataGroup.Name = "ResourceDataGroup";
             // 
             // ResourceDataGroup.Panel
             // 
+            this.ResourceDataGroup.Panel.Controls.Add(this.btnResetState);
             this.ResourceDataGroup.Panel.Controls.Add(this.label8);
-            this.ResourceDataGroup.Panel.Controls.Add(this.Tb_LabelSerialNumber);
             this.ResourceDataGroup.Panel.Controls.Add(this.Tb_PO);
-            this.ResourceDataGroup.Panel.Controls.Add(this.label4);
             this.ResourceDataGroup.Panel.Controls.Add(this.label30);
             this.ResourceDataGroup.Panel.Controls.Add(this.Tb_ContainerPosition);
             this.ResourceDataGroup.Panel.Controls.Add(this.Tb_ColorBoxSerialNumber);
@@ -245,11 +211,9 @@ namespace BackendGUI
             this.ResourceDataGroup.Panel.Controls.Add(this.Tb_Operation);
             this.ResourceDataGroup.Panel.Controls.Add(this.label7);
             this.ResourceDataGroup.Panel.Controls.Add(this.Tb_SerialNumber);
-            this.ResourceDataGroup.Panel.Controls.Add(this.label11);
             this.ResourceDataGroup.Panel.Controls.Add(this.Tb_CartonSerialNumber);
-            this.ResourceDataGroup.Panel.Controls.Add(this.Tb_ProductSerialNumber);
             this.ResourceDataGroup.Panel.Controls.Add(this.label2);
-            this.ResourceDataGroup.Size = new System.Drawing.Size(794, 162);
+            this.ResourceDataGroup.Size = new System.Drawing.Size(794, 157);
             this.ResourceDataGroup.StateCommon.Back.Color1 = System.Drawing.Color.White;
             this.ResourceDataGroup.StateCommon.Back.Color2 = System.Drawing.Color.White;
             this.ResourceDataGroup.StateCommon.Back.GraphicsHint = ComponentFactory.Krypton.Toolkit.PaletteGraphicsHint.AntiAlias;
@@ -281,24 +245,6 @@ namespace BackendGUI
             this.label8.TabIndex = 112;
             this.label8.Text = "Production Order :";
             // 
-            // Tb_LabelSerialNumber
-            // 
-            this.Tb_LabelSerialNumber.Enabled = false;
-            this.Tb_LabelSerialNumber.Location = new System.Drawing.Point(594, 96);
-            this.Tb_LabelSerialNumber.Name = "Tb_LabelSerialNumber";
-            this.Tb_LabelSerialNumber.Size = new System.Drawing.Size(186, 35);
-            this.Tb_LabelSerialNumber.StateCommon.Back.Color1 = System.Drawing.Color.White;
-            this.Tb_LabelSerialNumber.StateCommon.Border.Color1 = System.Drawing.Color.Black;
-            this.Tb_LabelSerialNumber.StateCommon.Border.Color2 = System.Drawing.Color.Black;
-            this.Tb_LabelSerialNumber.StateCommon.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
-            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
-            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right)));
-            this.Tb_LabelSerialNumber.StateCommon.Border.GraphicsHint = ComponentFactory.Krypton.Toolkit.PaletteGraphicsHint.AntiAlias;
-            this.Tb_LabelSerialNumber.StateCommon.Border.Rounding = 20;
-            this.Tb_LabelSerialNumber.StateCommon.Border.Width = 1;
-            this.Tb_LabelSerialNumber.StateCommon.Content.Color1 = System.Drawing.Color.Gray;
-            this.Tb_LabelSerialNumber.TabIndex = 49;
-            // 
             // Tb_PO
             // 
             this.Tb_PO.Enabled = false;
@@ -316,17 +262,6 @@ namespace BackendGUI
             this.Tb_PO.StateCommon.Border.Width = 1;
             this.Tb_PO.StateCommon.Content.Color1 = System.Drawing.Color.Gray;
             this.Tb_PO.TabIndex = 111;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.ForeColor = System.Drawing.Color.Gray;
-            this.label4.Location = new System.Drawing.Point(600, 77);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(137, 16);
-            this.label4.TabIndex = 48;
-            this.label4.Text = "Label Serial Number :";
             // 
             // label30
             // 
@@ -360,7 +295,7 @@ namespace BackendGUI
             // Tb_ColorBoxSerialNumber
             // 
             this.Tb_ColorBoxSerialNumber.Enabled = false;
-            this.Tb_ColorBoxSerialNumber.Location = new System.Drawing.Point(200, 96);
+            this.Tb_ColorBoxSerialNumber.Location = new System.Drawing.Point(4, 87);
             this.Tb_ColorBoxSerialNumber.Name = "Tb_ColorBoxSerialNumber";
             this.Tb_ColorBoxSerialNumber.Size = new System.Drawing.Size(186, 35);
             this.Tb_ColorBoxSerialNumber.StateCommon.Back.Color1 = System.Drawing.Color.White;
@@ -391,7 +326,7 @@ namespace BackendGUI
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.Gray;
-            this.label3.Location = new System.Drawing.Point(204, 77);
+            this.label3.Location = new System.Drawing.Point(8, 68);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(161, 16);
             this.label3.TabIndex = 46;
@@ -417,7 +352,7 @@ namespace BackendGUI
             // 
             // GroupofMaterial
             // 
-            this.GroupofMaterial.Location = new System.Drawing.Point(11, 523);
+            this.GroupofMaterial.Location = new System.Drawing.Point(6, 417);
             this.GroupofMaterial.Name = "GroupofMaterial";
             // 
             // GroupofMaterial.Panel
@@ -446,7 +381,7 @@ namespace BackendGUI
             // 
             // ResourceGrouping
             // 
-            this.ResourceGrouping.Location = new System.Drawing.Point(10, 84);
+            this.ResourceGrouping.Location = new System.Drawing.Point(3, 57);
             this.ResourceGrouping.Name = "ResourceGrouping";
             // 
             // ResourceGrouping.Panel
@@ -608,10 +543,10 @@ namespace BackendGUI
             // Dg_Maintenance
             // 
             this.Dg_Maintenance.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.Dg_Maintenance.Location = new System.Drawing.Point(8, 206);
+            this.Dg_Maintenance.Location = new System.Drawing.Point(1, 179);
             this.Dg_Maintenance.Name = "Dg_Maintenance";
             this.Dg_Maintenance.RowHeadersWidth = 51;
-            this.Dg_Maintenance.Size = new System.Drawing.Size(794, 142);
+            this.Dg_Maintenance.Size = new System.Drawing.Size(794, 78);
             this.Dg_Maintenance.StateCommon.Background.Color1 = System.Drawing.Color.White;
             this.Dg_Maintenance.StateCommon.Background.Color2 = System.Drawing.Color.White;
             this.Dg_Maintenance.StateCommon.Background.GraphicsHint = ComponentFactory.Krypton.Toolkit.PaletteGraphicsHint.AntiAlias;
@@ -650,7 +585,7 @@ namespace BackendGUI
             this.MyTitle.AutoSize = true;
             this.MyTitle.Font = new System.Drawing.Font("Segoe UI Black", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MyTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(68)))), ((int)(((byte)(101)))));
-            this.MyTitle.Location = new System.Drawing.Point(3, 24);
+            this.MyTitle.Location = new System.Drawing.Point(6, 9);
             this.MyTitle.Name = "MyTitle";
             this.MyTitle.Size = new System.Drawing.Size(154, 45);
             this.MyTitle.TabIndex = 51;
@@ -664,12 +599,11 @@ namespace BackendGUI
             // 
             // kryptonGroupBox1
             // 
-            this.kryptonGroupBox1.Location = new System.Drawing.Point(11, 654);
+            this.kryptonGroupBox1.Location = new System.Drawing.Point(6, 554);
             this.kryptonGroupBox1.Name = "kryptonGroupBox1";
             // 
             // kryptonGroupBox1.Panel
             // 
-            this.kryptonGroupBox1.Panel.Controls.Add(this.btnResetState);
             this.kryptonGroupBox1.Panel.Controls.Add(this.lblCommand);
             this.kryptonGroupBox1.Panel.Controls.Add(this.Tb_Scanner);
             this.kryptonGroupBox1.Size = new System.Drawing.Size(791, 128);
@@ -696,7 +630,7 @@ namespace BackendGUI
             // btnResetState
             // 
             this.btnResetState.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnResetState.Location = new System.Drawing.Point(687, 52);
+            this.btnResetState.Location = new System.Drawing.Point(679, 76);
             this.btnResetState.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnResetState.Name = "btnResetState";
             this.btnResetState.OverrideDefault.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(92)))), ((int)(((byte)(184)))), ((int)(((byte)(116)))));
@@ -789,8 +723,8 @@ namespace BackendGUI
             // btnResourceSetup
             // 
             this.btnResourceSetup.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnResourceSetup.Location = new System.Drawing.Point(498, 40);
-            this.btnResourceSetup.Margin = new System.Windows.Forms.Padding(8);
+            this.btnResourceSetup.Location = new System.Drawing.Point(501, 25);
+            this.btnResourceSetup.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
             this.btnResourceSetup.Name = "btnResourceSetup";
             this.btnResourceSetup.OverrideDefault.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(92)))), ((int)(((byte)(184)))), ((int)(((byte)(116)))));
             this.btnResourceSetup.OverrideDefault.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(143)))), ((int)(((byte)(81)))));
@@ -853,7 +787,7 @@ namespace BackendGUI
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
-            this.ClientSize = new System.Drawing.Size(804, 787);
+            this.ClientSize = new System.Drawing.Size(804, 709);
             this.Controls.Add(this.btnResourceSetup);
             this.Controls.Add(this.kryptonGroupBox1);
             this.Controls.Add(this.MyTitle);
@@ -903,13 +837,9 @@ namespace BackendGUI
         private System.Windows.Forms.Label label7;
         private ComponentFactory.Krypton.Toolkit.KryptonTextBox Tb_SerialNumber;
         private ComponentFactory.Krypton.Toolkit.KryptonListBox Lb_MaterialList;
-        private ComponentFactory.Krypton.Toolkit.KryptonTextBox Tb_ProductSerialNumber;
-        private System.Windows.Forms.Label label11;
         private ComponentFactory.Krypton.Toolkit.KryptonTextBox Tb_CartonSerialNumber;
         private System.Windows.Forms.Label label2;
         private ComponentFactory.Krypton.Toolkit.KryptonGroupBox ResourceDataGroup;
-        private ComponentFactory.Krypton.Toolkit.KryptonTextBox Tb_LabelSerialNumber;
-        private System.Windows.Forms.Label label4;
         private ComponentFactory.Krypton.Toolkit.KryptonTextBox Tb_ColorBoxSerialNumber;
         private System.Windows.Forms.Label label3;
         private ComponentFactory.Krypton.Toolkit.KryptonGroupBox GroupofMaterial;
