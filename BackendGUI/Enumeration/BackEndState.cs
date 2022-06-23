@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BackendGUI.Enumeration
+﻿namespace BackendGUI.Enumeration
 {
     public enum BackEndState
     {
@@ -12,15 +6,14 @@ namespace BackendGUI.Enumeration
         ScanUnitSerialNumber,
         CheckUnitStatus,
         UnitNotFound,
-        ScanProductSerialNumber,
-        ScanColorBoxSerialNumber,
-        ScanCartonBoxSerialNumber,
-        ScanLabelSerialNumber,
+        ScanAny,
         UpdateMoveInMove,
         MoveSuccess,
         MoveInOkMoveFail,
         MoveInFail,
         Done,
-        WrongPosition
+        WrongPosition,
+        WrongComponent,
+        WaitPreparation,
     }
 }

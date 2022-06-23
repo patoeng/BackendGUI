@@ -1,202 +1,269 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using BackendGUI.Enumeration;
-using Camstar.WCF.ObjectStack;
 using ComponentFactory.Krypton.Toolkit;
-using OpcenterWikLibrary;
 using MesData;
+using MesData.Login;
+using OpcenterWikLibrary;
+using BackendGUI.Enumeration;
+using MesData.Backend;
 
 namespace BackendGUI
 {
     public partial class Main : KryptonForm
     {
-
         #region CONSTRUCTOR
         public Main()
         {
             InitializeComponent();
-            Rectangle r = new Rectangle(0, 0, Pb_IndicatorPicture.Width, Pb_IndicatorPicture.Height);
-            System.Drawing.Drawing2D.GraphicsPath gp = new System.Drawing.Drawing2D.GraphicsPath();
-            int d = 28;
-            gp.AddArc(r.X, r.Y, d, d, 180, 90);
-            gp.AddArc(r.X + r.Width - d, r.Y, d, d, 270, 90);
-            gp.AddArc(r.X + r.Width - d, r.Y + r.Height - d, d, d, 0, 90);
-            gp.AddArc(r.X, r.Y + r.Height - d, d, d, 90, 90);
-            Pb_IndicatorPicture.Region = new Region(gp);
 
-            _mesData = new Mes("Backend Minime");
-
-          
-          
+#if MiniMe
+            var  name = "Backend Minime";
+            Text = Mes.AddVersionNumber(name);
+#elif Ariel
+            var name = "Backend Ariel";
+            Text = Mes.AddVersionNumber(name);
+#endif
+            _mesData = new Mes("", AppSettings.Resource,name);
 
             WindowState = FormWindowState.Normal;
-            Size = new Size(820, 716);
-            MyTitle.Text = $"Backend - {AppSettings.Resource}";
-            ResourceGrouping.Values.Heading = $"Resource Status: {AppSettings.Resource}";
-            ResourceDataGroup.Values.Heading = $"Resource Data Collection: {AppSettings.Resource}";
+            Size = new Size(1134, 701);
+            lbTitle.Text =AppSettings.Resource;
+
+
+            _componentSetting = BackendComponentSetting.Load();
+            _componentSetting?.Save();
+
+            kryptonNavigator1.SelectedIndex = 0;
         }
+
+        public sealed override string Text
+        {
+            get { return base.Text; }
+            set { base.Text = value; }
+        }
+
         #endregion
 
-        #region INSTANCE VARIABLE
-
-        private static Mes _mesData;
-        private static DateTime _dMoveIn;
+#region INSTANCE VARIABLE
+      
         private BackEndState _backEndState;
+        private readonly Mes _mesData;
+        private DateTime _dMoveIn;
+        private BackendComponentSetting _componentSetting;
+        private BackendComponentSetting _tempComponentSetting;
 
         #endregion
+
+#region FUNCTION USEFULL
+        
         private async Task SetBackendState(BackEndState backEndState)
         {
             _backEndState = backEndState;
             switch (_backEndState)
             {
                 case BackEndState.PlaceUnit:
-                    Tb_Scanner.Enabled = false;
-                    lblCommand.ForeColor = Color.Red;
-                    lblCommand.Text = "Resource is not in \"Up\" condition!";
+                    _readScanner = false;
                     break;
                 case BackEndState.ScanUnitSerialNumber:
-                    Tb_Operation.Clear();
-                    Tb_PO.Clear();
-                    Tb_ContainerPosition.Clear();
-                    Tb_CartonSerialNumber.Clear();
-                    Tb_ColorBoxSerialNumber.Clear();
-                    Tb_SerialNumber.Clear();
-                    Lb_MaterialList.Items.Clear();
-                    GroupofMaterial.Values.Heading = @"Material -";
-
-                    if (_mesData.ResourceStatusDetails == null || _mesData.ResourceStatusDetails?.Availability != "Up")
-                    {
-                        await SetBackendState(BackEndState.PlaceUnit);
-                        break;
-                    }
-
-                    Tb_Scanner.Enabled = true;
+                    _readScanner = true;
                     lblCommand.ForeColor = Color.LimeGreen;
                     lblCommand.Text = @"Scan Unit Serial Number!";
-                    ActiveControl = Tb_Scanner;
+                    ClrContainer();
                     break;
                 case BackEndState.CheckUnitStatus:
-                    Tb_Scanner.Enabled = false;
+                    _readScanner = false;
                     lblCommand.Text = @"Checking Unit Status";
-
                     var oContainerStatus = await Mes.GetContainerStatusDetails(_mesData, Tb_SerialNumber.Text, _mesData.DataCollectionName);
-                    Tb_ContainerPosition.Text = await Mes.GetCurrentContainerStep(_mesData, Tb_SerialNumber.Text);
                     if (oContainerStatus != null)
                     {
-                        if (oContainerStatus.MfgOrderName != null) Tb_PO.Text = oContainerStatus.MfgOrderName.ToString();
-                        if (oContainerStatus.Operation != null) Tb_Operation.Text = oContainerStatus.Operation.Name;
-                        if (oContainerStatus.Operation?.Name != _mesData.DataCollectionName)
-                        {
-                            await SetBackendState(BackEndState.WrongPosition);
-                            break;
-                        }
-                        GroupofMaterial.Values.Heading = $@"Material: {oContainerStatus.ContainerName.Value}";
-                        if (oContainerStatus.MfgOrderName?.ToString() != "")
-                        {
-                            var mfgOrder = await Mes.GetMfgOrder(_mesData, oContainerStatus.MfgOrderName?.ToString());
-                            if (mfgOrder != null)
-                            {
-                                if (mfgOrder.MaterialList.Length > 0)
-                                {
-                                    Lb_MaterialList.Items.Add($"Material | Qty");
-                                    foreach (var materialItem in mfgOrder.MaterialList)
-                                    {
-                                        if (materialItem.QtyRequired != 0 && materialItem.RouteStep != null) if (materialItem.RouteStep.ToString().Split('{')[0] == oContainerStatus.OperationName.Value) Lb_MaterialList.Items.Add($"{materialItem.Product.Name} | {materialItem.QtyRequired} | {materialItem.RouteStep.ToString().Split('{')[0]}");
-                                    }
-                                }
-                            }
+                       if (oContainerStatus.Operation?.Name != _mesData.OperationName)
+                       {
+                           await SetBackendState(BackEndState.WrongPosition);
+                           break;
+                       }
+                       if (oContainerStatus.MfgOrderName?.ToString() != "")
+                       {
+                           var mfgOrder = await Mes.GetMfgOrder(_mesData, oContainerStatus.MfgOrderName?.ToString());
+                           _mesData.SetManufacturingOrder(mfgOrder);
+                           if (mfgOrder != null)
+                           {
+                               _backendComponent = new BackendComponent
+                               {
+                                   MasterCarton =
+                                   {
+                                       Enabled = mfgOrder.MaterialList.Select(x=>
+                                           x.Product.Name.IndexOf("801", StringComparison.Ordinal) == 0 ||
+                                           x.Product.Name.IndexOf("820", StringComparison.Ordinal) == 0 && x.wikScanning.Value=="X").ToList().Count > 0
+                                   },
+                                   ColorBox =
+                                   {
+                                       Enabled = mfgOrder.MaterialList.Select(x =>
+                                           x.Product.Name.IndexOf("802", StringComparison.Ordinal) == 0 && x.wikScanning.Value=="X").ToList().Count > 0
+                                   },
+                                   MasterCartonLabel =
+                                   {
+                                       Enabled = mfgOrder.MaterialList.Select(x =>
+                                           x.Product.Name.IndexOf("809", StringComparison.Ordinal) == 0 && x.wikScanning.Value=="X").ToList().Count > 0
+                                   },
+                                   ColorBoxLabel =
+                                   {
+                                       Enabled = mfgOrder.MaterialList.Select(x =>
+                                           x.Product.Name.IndexOf("809", StringComparison.Ordinal) == 0 && x.wikScanning.Value=="X").ToList().Count > 0
+                                   }
+                               };
 
-                        }
+                               _backendComponent.MasterCarton.Enabled &= _componentSetting.MasterCartonEnable == EnableDisable.Enable;
+                               _backendComponent.ColorBox.Enabled &= _componentSetting.ColorBoxEnable == EnableDisable.Enable;
+                               _backendComponent.MasterCartonLabel.Enabled &= _componentSetting.LabelEnable == EnableDisable.Enable;
+                               _backendComponent.ColorBoxLabel.Enabled &= _componentSetting.LabelEnable == EnableDisable.Enable;
 
-                        _dMoveIn = DateTime.Now;
-                        await SetBackendState(BackEndState.ScanColorBoxSerialNumber);
-                        break;
+                               Tb_MasterCarton.Visible = _backendComponent.MasterCarton.Enabled;
+                               Tb_ColorBox.Visible = _backendComponent.ColorBox.Enabled;
+                               Tb_MasterCartonLabel.Visible = _backendComponent.MasterCartonLabel.Enabled;
+                               Tb_ColorBoxLabel.Visible = _backendComponent.ColorBoxLabel.Enabled;
+
+                               // Update PO information
+                               Tb_PO.Text = oContainerStatus.MfgOrderName?.Value;
+                               Tb_Product.Text = oContainerStatus.Product.Name;
+                               Tb_ProductDesc.Text = oContainerStatus.ProductDescription.Value;
+
+                               var img = await Mes.GetImage(_mesData, oContainerStatus.Product.Name);
+                               pictureBox1.ImageLocation = img.Identifier.Value;
+
+                               var count = await Mes.GetCounterFromMfgOrder(_mesData);
+                               Tb_PpaQty.Text = count.ToString();
+                           }
+                            
+                       }
+
+                       _dMoveIn = DateTime.Now;
+                       lbMoveIn.Text = _dMoveIn.ToString(Mes.DateTimeStringFormat);
+                       lbMoveOut.Text = "";
+
+                       await SetBackendState(BackEndState.ScanAny);
+                       break;
                     }
                     await SetBackendState(BackEndState.UnitNotFound);
                     break;
                 case BackEndState.UnitNotFound:
-                    Tb_Scanner.Enabled = false;
+                    _readScanner = false;
                     lblCommand.ForeColor = Color.Red;
                     lblCommand.Text = @"Unit Not Found";
                     break;
-                case BackEndState.ScanProductSerialNumber:
-                    Tb_Scanner.Enabled = true;
-                    lblCommand.Text = @"Scan Product Serial Number!";
-                    break;
-                case BackEndState.ScanColorBoxSerialNumber:
-                    Tb_Scanner.Enabled = true;
-                    lblCommand.Text = @"Scan Color Box Serial Number!";
-                    break;
-                case BackEndState.ScanCartonBoxSerialNumber:
-                    Tb_Scanner.Enabled = true;
-                    lblCommand.Text = @"Scan Carton Box Serial Number!";
-                    break;
-                case BackEndState.ScanLabelSerialNumber:
-                    Tb_Scanner.Enabled = true;
-                    lblCommand.Text = @"Scan Label Serial Number!";
+                case BackEndState.ScanAny:
+                    _readScanner = true;
+                    lblCommand.ForeColor = Color.LimeGreen;
+                    lblCommand.Text = @"Scan Any Component!";
                     break;
                 case BackEndState.UpdateMoveInMove:
-                    Tb_Scanner.Enabled = false;
-                    lblCommand.Text = @"Container Move In";
-                    var cDataPoint = new DataPointDetails[2];
-                   
-                    cDataPoint[0] = new DataPointDetails { DataName = "Color Box Serial Number", DataValue = Tb_ColorBoxSerialNumber.Text, DataType = DataTypeEnum.String };
-                    cDataPoint[1] = new DataPointDetails { DataName = "Carton Box Serial Number", DataValue = Tb_CartonSerialNumber.Text, DataType = DataTypeEnum.String };
-                    
+                    _readScanner = false;
+                    lblCommand.ForeColor = Color.LimeGreen;
+                    lblCommand.Text = @"Moving Container...";
                     oContainerStatus = await Mes.GetContainerStatusDetails(_mesData, Tb_SerialNumber.Text, _mesData.DataCollectionName);
                     if (oContainerStatus != null)
                     {
                         var resultMoveIn = await Mes.ExecuteMoveIn(_mesData, oContainerStatus.ContainerName.Value,
                             _dMoveIn, 15000);
-                        if (resultMoveIn)
+                        if (resultMoveIn.Result)
                         {
                             lblCommand.Text = @"Container Move Standard";
-                            var resultMoveStd = await Mes.ExecuteMoveStandard(_mesData, oContainerStatus.ContainerName.Value, DateTime.Now, cDataPoint, 30000);
-                            await SetBackendState(resultMoveStd
+                            _dMoveOut = DateTime.Now;
+                            lbMoveOut.Text = _dMoveOut.ToString(Mes.DateTimeStringFormat);
+                            var resultMoveStd = await Mes.ExecuteMoveStandard(_mesData, oContainerStatus.ContainerName.Value, _dMoveOut, null, 30000);
+                            await SetBackendState(resultMoveStd.Result
                                 ? BackEndState.ScanUnitSerialNumber
                                 : BackEndState.MoveInOkMoveFail);
+
+                            //Consume Component
+                            var listIssue = new List<dynamic>();
+                            if (_backendComponent.MasterCarton.Enabled) listIssue.Add(_backendComponent.MasterCarton.ToIssueActualDetail());
+                            if (_backendComponent.MasterCartonLabel.Enabled) listIssue.Add(_backendComponent.MasterCartonLabel.ToIssueActualDetail());
+                            if (_backendComponent.ColorBox.Enabled) listIssue.Add(_backendComponent.ColorBox.ToIssueActualDetail());
+                            if (_backendComponent.ColorBoxLabel.Enabled) listIssue.Add(_backendComponent.ColorBoxLabel.ToIssueActualDetail());
+
+                            if (listIssue.Count > 0)
+                            {
+                                await Mes.ExecuteComponentIssue(_mesData, oContainerStatus.ContainerName.Value,
+                                    listIssue);
+                            }
+
+                            //Update Counter
+                            if (resultMoveStd.Result)
+                            {
+
+                                var mfgOrder = await Mes.GetMfgOrder(_mesData, _mesData.ManufacturingOrder.Name?.ToString());
+                                _mesData.SetManufacturingOrder(mfgOrder);
+                                await Mes.UpdateCounter(_mesData,1);
+                                var count = await Mes.GetCounterFromMfgOrder(_mesData);
+                                Tb_PpaQty.Text = count.ToString();
+                            }
+                            
                             break;
                         }
 
                         await SetBackendState(BackEndState.MoveInFail);
                     }
                     break;
+                case BackEndState.MoveSuccess:
+                    _readScanner = false;
+                    break;
                 case BackEndState.MoveInOkMoveFail:
+                    _readScanner = false;
                     lblCommand.ForeColor = Color.Red;
-                    Tb_Scanner.Enabled = false;
                     lblCommand.Text = @"Move Standard Fail";
                     break;
                 case BackEndState.MoveInFail:
                     lblCommand.ForeColor = Color.Red;
-                    Tb_Scanner.Enabled = false;
                     lblCommand.Text = @"Move In Fail";
+                    _readScanner = false;
                     break;
                 case BackEndState.Done:
+                    _readScanner = false;
                     break;
                 case BackEndState.WrongPosition:
+                    _readScanner = false;
                     lblCommand.ForeColor = Color.Red;
-                    Tb_Scanner.Enabled = false;
-                    lblCommand.Text = @"Incorrect Product Operation";
+                    lblCommand.Text = @"Wrong product position";
+                    break;
+                case BackEndState.WrongComponent:
+                    _readScanner = false;
+                    lblCommand.ForeColor = Color.Red;
+                    lblCommand.Text = @"Wrong Component";
+                    break;
+                case BackEndState.WaitPreparation:
+                    _readScanner = false;
+                    lblCommand.ForeColor = Color.Red;
+                    lblCommand.Text = @"Wait Preparation";
+                    btnStartPreparation.Enabled = true;
                     break;
             }
         }
 
-        #region FUNCTION STATUS OF RESOURCE
+        private void ClrContainer()
+        {
+            Tb_Scanner.Clear();
+            Tb_SerialNumber.Clear();
+            Tb_ColorBox.Clear();
+            Tb_ColorBoxLabel.Clear();
+            Tb_MasterCarton.Clear();
+            Tb_MasterCartonLabel.Clear();
+        }
+
+        #endregion
+
+#region FUNCTION STATUS OF RESOURCE
 
         private async Task GetStatusMaintenanceDetails()
         {
             try
             {
-                 var maintenanceStatusDetails = await Mes.GetMaintenanceStatusDetails(_mesData);
+                var maintenanceStatusDetails = await Mes.GetMaintenanceStatusDetails(_mesData);
                 if (maintenanceStatusDetails != null)
                 {
                     Dg_Maintenance.DataSource = maintenanceStatusDetails;
@@ -237,37 +304,93 @@ namespace BackendGUI
                 EventLogUtil.LogErrorEvent(ex.Source, ex);
             }
         }
-        private async Task GetStatusOfResource(int timeOut=5000)
+        private async Task GetStatusOfResource()
         {
             try
             {
-                var resourceStatus = await Mes.GetResourceStatusDetails(_mesData,timeOut);
+                var resourceStatus = await Mes.GetResourceStatusDetails(_mesData);
                 _mesData.SetResourceStatusDetails(resourceStatus);
 
                 if (resourceStatus != null)
                 {
-                    if (resourceStatus.Status != null) Tb_StatusCode.Text = resourceStatus.Status.Name;
-                    if (resourceStatus.Reason != null) Tb_StatusReason.Text = resourceStatus.Reason.Name;
+                    if (resourceStatus.Status != null) Tb_StatusCode.Text = resourceStatus.Reason?.Name;
                     if (resourceStatus.Availability != null)
                     {
-                        Tb_Availability.Text = resourceStatus.Availability.Value;
                         if (resourceStatus.Availability.Value == "Up")
                         {
-                            Pb_IndicatorPicture.BackColor = Color.Green;
+                            Tb_StatusCode.StateCommon.Content.Color1 = resourceStatus.Reason?.Name == "Quality Inspection" ? Color.Orange : Color.Green;
                         }
                         else if (resourceStatus.Availability.Value == "Down")
                         {
-                            Pb_IndicatorPicture.BackColor = Color.Red;
+                            Tb_StatusCode.StateCommon.Content.Color1 = Color.Red;
                         }
                     }
                     else
                     {
-                        Pb_IndicatorPicture.BackColor = Color.Orange;
+                        Tb_StatusCode.StateCommon.Content.Color1 = Color.Orange;
                     }
-                   
+
                     if (resourceStatus.TimeAtStatus != null)
-                        Tb_TimeAtStatus.Text =
-                            $@"{DateTime.FromOADate(resourceStatus.TimeAtStatus.Value) - Mes.ZeroEpoch():G}";
+                        Tb_TimeAtStatus.Text = $@"{Mes.OaTimeSpanToString(resourceStatus.TimeAtStatus.Value)}";
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Source = AppSettings.AssemblyName == ex.Source ? MethodBase.GetCurrentMethod()?.Name : MethodBase.GetCurrentMethod()?.Name + "." + ex.Source;
+                EventLogUtil.LogErrorEvent(ex.Source, ex);
+            }
+        }
+
+        private async Task GetStatusOfResourceDetail()
+        {
+            try
+            {
+                var resourceStatus = await Mes.GetResourceStatusDetails(_mesData);
+                _mesData.SetResourceStatusDetails(resourceStatus);
+
+                if (resourceStatus != null)
+                {
+                    if (resourceStatus.Status != null) Cb_StatusCode.Text = resourceStatus.Status.Name;
+                    await Task.Delay(1000);
+                    if (resourceStatus.Reason != null) Cb_StatusReason.Text = resourceStatus.Reason.Name;
+                    if (resourceStatus.Availability != null)
+                    {
+                        Tb_StatusCodeM.Text = resourceStatus.Availability.Value;
+                        if (resourceStatus.Availability.Value == "Up")
+                        {
+                            Tb_StatusCodeM.StateCommon.Content.Color1 = Color.Green;
+                        }
+                        else if (resourceStatus.Availability.Value == "Down")
+                        {
+                            Tb_StatusCodeM.StateCommon.Content.Color1 = Color.Red;
+                        }
+                    }
+                    else
+                    {
+                        Tb_StatusCodeM.StateCommon.Content.Color1 = Color.Orange;
+                    }
+
+                    if (resourceStatus.TimeAtStatus != null)
+                        Tb_TimeAtStatus.Text = $@"{Mes.OaTimeSpanToString(resourceStatus.TimeAtStatus.Value)}";
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Source = AppSettings.AssemblyName == ex.Source
+                    ? MethodBase.GetCurrentMethod()?.Name
+                    : MethodBase.GetCurrentMethod()?.Name + "." + ex.Source;
+                EventLogUtil.LogErrorEvent(ex.Source, ex);
+            }
+        }
+
+        private async Task GetResourceStatusCodeList()
+        {
+            try
+            {
+                var oStatusCodeList = await Mes.GetListResourceStatusCode(_mesData);
+                if (oStatusCodeList != null)
+                {
+                    Cb_StatusCode.DataSource = oStatusCodeList;
                 }
             }
             catch (Exception ex)
@@ -279,60 +402,299 @@ namespace BackendGUI
         #endregion
 
         #region COMPONENT EVENT
-       
-       
-        
+
         private async void TimerRealtime_Tick(object sender, EventArgs e)
         {
             await GetStatusOfResource();
             await GetStatusMaintenanceDetails();
         }
-       
-       
-
-     
         private async void btnResetState_Click(object sender, EventArgs e)
         {
+            if (_backEndState == BackEndState.WaitPreparation) return;
             await SetBackendState(BackEndState.ScanUnitSerialNumber);
+            Tb_Scanner.Focus();
         }
 
-        private async  void Tb_Scanner_KeyUp(object sender, KeyEventArgs e)
+        private bool _readScanner;
+        private bool _ignoreScanner;
+        private BackendComponent _backendComponent;
+        private DateTime _dMoveOut;
+
+        private async void Tb_Scanner_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode != Keys.Enter) return;
-            if (string.IsNullOrEmpty(Tb_Scanner.Text)) return;
-            switch (_backEndState)
+            if(!_readScanner) Tb_Scanner.Clear();
+            if (_ignoreScanner) e.Handled = true;
+            if (e.KeyCode == Keys.Enter)
             {
-                case BackEndState.ScanUnitSerialNumber:
-                    Tb_SerialNumber.Text = Tb_Scanner.Text;
-                    await SetBackendState(BackEndState.CheckUnitStatus);
-                    break;
-                case BackEndState.ScanColorBoxSerialNumber:
-                    Tb_ColorBoxSerialNumber.Text = Tb_Scanner.Text;
-                    Tb_Scanner.Clear();
-                    await SetBackendState(BackEndState.ScanCartonBoxSerialNumber);
-                    break;
-                case BackEndState.ScanCartonBoxSerialNumber:
-                    Tb_CartonSerialNumber.Text = Tb_Scanner.Text;
-                    Tb_Scanner.Clear();
-                    await SetBackendState(BackEndState.UpdateMoveInMove);
-                    break;
-                
+                _ignoreScanner = true;
+                if (!string.IsNullOrEmpty(Tb_Scanner.Text))
+                {
+                    switch (_backEndState)
+                    {
+                        case BackEndState.ScanUnitSerialNumber:
+                            Tb_SerialNumber.Text = Tb_Scanner.Text.Trim();
+                            Tb_Scanner.Clear();
+                            await SetBackendState(BackEndState.CheckUnitStatus);
+                            break;
+                        case BackEndState.ScanAny:
+                            if (_backendComponent.Completed)
+                            {
+                                await SetBackendState(BackEndState.UpdateMoveInMove);
+                                break;
+                            }
+                            var scanned = Tb_Scanner.Text.Trim();
+                            //validate
+                            if (scanned.Length >= 10)
+                            {
+                                var valid = _mesData.ManufacturingOrder.MaterialList.Where(x =>
+                                    x.Product.Name.IndexOf(scanned.Substring(0, 10), StringComparison.Ordinal)==0 && x.wikScanning.Value == "X").ToList();
+                                if (valid.Count>0)
+                                {
+                                    var distinct = scanned.Substring(0, 3);
+                                    //distinguish component
+                                    if (_backendComponent.MasterCarton.Enabled)
+                                    {
+                                        if (distinct == "801" || distinct == "820")
+                                        {
+                                            _backendComponent.MasterCarton.Value = scanned;
+                                            _backendComponent.MasterCarton.QuantityRequired =
+                                                valid[0].QtyRequired.Value;
+                                            Tb_MasterCarton.Text = scanned;
+                                        }
+
+                                    }
+                                    if (_backendComponent.ColorBox.Enabled)
+                                    {
+                                        if (distinct == "802")
+                                        {
+                                            _backendComponent.ColorBox.Value = scanned;
+                                            _backendComponent.ColorBox.QuantityRequired = valid[0].QtyRequired.Value;
+                                            Tb_ColorBox.Text = scanned;
+                                        }
+                                    }
+                                    if (_backendComponent.ColorBoxLabel.Enabled && _backendComponent.ColorBoxLabel.Value!=null)
+                                    {
+                                        if (distinct == "809")
+                                        {
+                                            _backendComponent.ColorBoxLabel.Value = scanned;
+                                            _backendComponent.ColorBoxLabel.QuantityRequired = valid[0].QtyRequired.Value;
+                                            Tb_ColorBoxLabel.Text = scanned;
+                                        }
+                                    }
+                                    if (_backendComponent.MasterCartonLabel.Enabled && _backendComponent.MasterCartonLabel.Value != null)
+                                    {
+                                        if (distinct == "809")
+                                        {
+                                            _backendComponent.MasterCartonLabel.Value = scanned;
+                                            _backendComponent.MasterCartonLabel.QuantityRequired = valid[0].QtyRequired.Value;
+                                            Tb_MasterCartonLabel.Text = scanned;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    await SetBackendState(BackEndState.WrongComponent);
+                                    break;
+                                }
+                            }
+                            if (_backendComponent.Completed)
+                            {
+                                await SetBackendState(BackEndState.UpdateMoveInMove);
+                            }
+                            break;
+                    }
+                }
+
+                _ignoreScanner = false;
+                Tb_Scanner.Clear();
             }
-            Tb_Scanner.Clear();
         }
-        #endregion
+#endregion
 
         private async void Main_Load(object sender, EventArgs e)
         {
             await GetStatusOfResource();
             await GetStatusMaintenanceDetails();
-            await SetBackendState(BackEndState.ScanUnitSerialNumber);
+            await GetResourceStatusCodeList();
+            await SetBackendState(BackEndState.WaitPreparation);
         }
 
-        private async void btnResourceSetup_Click(object sender, EventArgs e)
+        private void ClearPo()
         {
-            Mes.ResourceSetupForm(this, _mesData, MyTitle.Text);
+            Tb_PO.Clear();
+            Tb_Product.Clear();
+            Tb_ProductDesc.Clear();
+            Tb_PpaQty.Clear();
+            pictureBox1.ImageLocation = null;
+            ClrContainer();
+        }
+      
+        private void kryptonGroupBox2_Panel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private async void Cb_StatusCode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                var oStatusCode = await Mes.GetResourceStatusCode(_mesData, Cb_StatusCode.SelectedValue != null ? Cb_StatusCode.SelectedValue.ToString() : "");
+                if (oStatusCode != null)
+                {
+                    Tb_StatusCodeM.Text = oStatusCode.Availability.ToString();
+                    if (oStatusCode.ResourceStatusReasons != null)
+                    {
+                        var oStatusReason = await Mes.GetResourceStatusReasonGroup(_mesData, oStatusCode.ResourceStatusReasons.Name);
+                        Cb_StatusReason.DataSource = oStatusReason.Entries;
+                    }
+                    else
+                    {
+                        Cb_StatusReason.Items.Clear();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Source = AppSettings.AssemblyName == ex.Source ? MethodBase.GetCurrentMethod()?.Name : MethodBase.GetCurrentMethod()?.Name + "." + ex.Source;
+                EventLogUtil.LogErrorEvent(ex.Source, ex);
+            }
+        }
+        private async void btnSetMachineStatus_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var result = false;
+                if (Cb_StatusCode.Text != "" && Cb_StatusReason.Text != "")
+                {
+                    result = await Mes.SetResourceStatus(_mesData, Cb_StatusCode.Text, Cb_StatusReason.Text);
+                }
+                else if (Cb_StatusCode.Text != "")
+                {
+                    result = await Mes.SetResourceStatus(_mesData, Cb_StatusCode.Text, "");
+                }
+
+                await GetStatusOfResourceDetail();
+                await GetStatusOfResource();
+                KryptonMessageBox.Show(result ? "Setup status successful" : "Setup status failed");
+
+            }
+            catch (Exception ex)
+            {
+                ex.Source = AppSettings.AssemblyName == ex.Source ? MethodBase.GetCurrentMethod()?.Name : MethodBase.GetCurrentMethod()?.Name + "." + ex.Source;
+                EventLogUtil.LogErrorEvent(ex.Source, ex);
+            }
+        }
+
+        private async void kryptonNavigator1_SelectedPageChanged(object sender, EventArgs e)
+        {
+            if (kryptonNavigator1.SelectedIndex == 1)
+            {
+                await GetStatusOfResourceDetail();
+            }
+            if (kryptonNavigator1.SelectedIndex == 2)
+            {
+                _tempComponentSetting = BackendComponentSetting.Load(BackendComponentSetting.FileName);
+                Ppg_Pcba.SelectedObject = _tempComponentSetting;
+            }
+            if (kryptonNavigator1.SelectedIndex == 3)
+            {
+                lblPo.Text = $@"Serial Number of PO: {_mesData.ManufacturingOrder?.Name}";
+                lblLoading.Visible = true;
+                await GetFinishedGoodRecord();
+                lblLoading.Visible = false;
+            }
+
+        }
+        private async Task GetFinishedGoodRecord()
+        {
+            var data = await Mes.GetFinishGoodRecord(_mesData, _mesData.ManufacturingOrder?.Name.ToString());
+            if (data != null)
+            {
+                var list = await Mes.ContainerStatusesToFinishedGood(data);
+                finishedGoodBindingSource.DataSource = new BindingList<FinishedGood>(list);
+                kryptonDataGridView1.DataSource = finishedGoodBindingSource;
+                Tb_FinishedGoodCounter.Text = list.Length.ToString();
+            }
+        }
+        private void Btn_SetPcba_Click(object sender, EventArgs e)
+        {
+            _tempComponentSetting.SaveFile();
+            _componentSetting = BackendComponentSetting.Load(BackendComponentSetting.FileName);
+        }
+
+       
+        private void kryptonNavigator1_Selecting(object sender, ComponentFactory.Krypton.Navigator.KryptonPageCancelEventArgs e)
+        {
+            if (e.Index != 1 && e.Index != 2) return;
+
+            using (var ss = new LoginForm24())
+            {
+                var dlg = ss.ShowDialog(this);
+                if (dlg == DialogResult.Abort)
+                {
+                    KryptonMessageBox.Show("Login Failed");
+                    e.Cancel = true;
+                    return;
+                }
+                if (dlg == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                if (ss.UserDetails.UserRole == UserRole.Maintenance && e.Index != 1) e.Cancel = true;
+                if (ss.UserDetails.UserRole == UserRole.Quality && e.Index != 2) e.Cancel = true;
+            }
+
+
+        }
+
+        private async void btnCallMaintenance_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var result = await Mes.SetResourceStatus(_mesData, "BE - Internal Downtime", "Maintenance");
+                await GetStatusOfResource();
+                KryptonMessageBox.Show(result ? "Setup status successful" : "Setup status failed");
+
+            }
+            catch (Exception ex)
+            {
+                ex.Source = AppSettings.AssemblyName == ex.Source ? MethodBase.GetCurrentMethod()?.Name : MethodBase.GetCurrentMethod()?.Name + "." + ex.Source;
+                EventLogUtil.LogErrorEvent(ex.Source, ex);
+            }
+        }
+
+        private async void btnFinishPreparation_Click(object sender, EventArgs e)
+        {
+            if (_mesData.ResourceStatusDetails.Reason.Name == "Maintenance") return;
+            var result = await Mes.SetResourceStatus(_mesData, "BE - Productive Time", "Pass");
             await GetStatusOfResource();
+            if (result)
+            {
+                btnFinishPreparation.Enabled = false;
+                btnStartPreparation.Enabled = true;
+                await SetBackendState(BackEndState.ScanUnitSerialNumber);
+            }
+        }
+
+        private async void btnStartPreparation_Click(object sender, EventArgs e)
+        {
+            ClearPo();
+            if (_mesData.ResourceStatusDetails?.Reason?.Name=="Maintenance") return;
+            _mesData.SetManufacturingOrder(null);
+            var result = await Mes.SetResourceStatus(_mesData, "BE - Planned Downtime", "Preparation");
+            await GetStatusOfResource();
+            if (result)
+            {
+                btnFinishPreparation.Enabled = true;
+                btnStartPreparation.Enabled = false;
+            }
+        }
+
+       
+        private void Tb_Scanner_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
