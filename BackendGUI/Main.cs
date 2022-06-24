@@ -40,12 +40,13 @@ namespace BackendGUI
             _componentSetting?.Save();
 
             kryptonNavigator1.SelectedIndex = 0;
+            EventLogUtil.LogEvent("Application Start");
         }
 
         public sealed override string Text
         {
-            get { return base.Text; }
-            set { base.Text = value; }
+            get => base.Text;
+            set => base.Text = value;
         }
 
         #endregion
@@ -87,7 +88,7 @@ namespace BackendGUI
                            await SetBackendState(BackEndState.WrongPosition);
                            break;
                        }
-                       if (oContainerStatus.MfgOrderName?.ToString() != "")
+                       if (oContainerStatus.MfgOrderName?.ToString() != "" && _mesData.ManufacturingOrder==null)
                        {
                            var mfgOrder = await Mes.GetMfgOrder(_mesData, oContainerStatus.MfgOrderName?.ToString());
                            _mesData.SetManufacturingOrder(mfgOrder);
@@ -97,31 +98,37 @@ namespace BackendGUI
                                {
                                    MasterCarton =
                                    {
-                                       Enabled = mfgOrder.MaterialList.Select(x=>
+                                       Enabled = mfgOrder.MaterialList.Where(x=>
                                            x.Product.Name.IndexOf("801", StringComparison.Ordinal) == 0 ||
-                                           x.Product.Name.IndexOf("820", StringComparison.Ordinal) == 0 && x.wikScanning.Value=="X").ToList().Count > 0
+                                           x.Product.Name.IndexOf("820", StringComparison.Ordinal) == 0 && x.wikScanning?.Value=="X" && x.wikScanning!=null).ToList().Count > 0
+
                                    },
                                    ColorBox =
                                    {
-                                       Enabled = mfgOrder.MaterialList.Select(x =>
-                                           x.Product.Name.IndexOf("802", StringComparison.Ordinal) == 0 && x.wikScanning.Value=="X").ToList().Count > 0
-                                   },
-                                   MasterCartonLabel =
-                                   {
-                                       Enabled = mfgOrder.MaterialList.Select(x =>
-                                           x.Product.Name.IndexOf("809", StringComparison.Ordinal) == 0 && x.wikScanning.Value=="X").ToList().Count > 0
+                                       Enabled = mfgOrder.MaterialList.Where(x =>
+                                           x.Product.Name.IndexOf("802", StringComparison.Ordinal) == 0 && x.wikScanning?.Value=="X" && x.wikScanning!=null).ToList().Count > 0
                                    },
                                    ColorBoxLabel =
                                    {
-                                       Enabled = mfgOrder.MaterialList.Select(x =>
-                                           x.Product.Name.IndexOf("809", StringComparison.Ordinal) == 0 && x.wikScanning.Value=="X").ToList().Count > 0
-                                   }
+                                         Enabled = mfgOrder.MaterialList.Where(x =>
+                                           x.Product.Name.IndexOf("809", StringComparison.Ordinal) == 0 && x.wikScanning?.Value=="X" && x.wikScanning!=null).ToList().Count > 0
+                                   },
+                                   MasterCartonLabel =
+                                   {
+                                           Enabled = mfgOrder.MaterialList.Where(x =>
+                                           x.Product.Name.IndexOf("809", StringComparison.Ordinal) == 0 && x.wikScanning?.Value=="X" && x.wikScanning!=null).ToList().Count > 1
+                                        },
                                };
 
                                _backendComponent.MasterCarton.Enabled &= _componentSetting.MasterCartonEnable == EnableDisable.Enable;
                                _backendComponent.ColorBox.Enabled &= _componentSetting.ColorBoxEnable == EnableDisable.Enable;
                                _backendComponent.MasterCartonLabel.Enabled &= _componentSetting.LabelEnable == EnableDisable.Enable;
                                _backendComponent.ColorBoxLabel.Enabled &= _componentSetting.LabelEnable == EnableDisable.Enable;
+
+                               lblColorBox.Visible = _backendComponent.ColorBox.Enabled;
+                               lblColorBoxLabel.Visible = _backendComponent.ColorBoxLabel.Enabled;
+                               lblMasterCarton.Visible = _backendComponent.MasterCarton.Enabled;
+                               lblMasterCartonLabel.Visible = _backendComponent.MasterCartonLabel.Enabled;
 
                                Tb_MasterCarton.Visible = _backendComponent.MasterCarton.Enabled;
                                Tb_ColorBox.Visible = _backendComponent.ColorBox.Enabled;
@@ -145,7 +152,12 @@ namespace BackendGUI
                        _dMoveIn = DateTime.Now;
                        lbMoveIn.Text = _dMoveIn.ToString(Mes.DateTimeStringFormat);
                        lbMoveOut.Text = "";
-
+                        _backendComponent.ResetValue();
+                        if (_backendComponent.Completed)
+                        {
+                            await SetBackendState(BackEndState.UpdateMoveInMove);
+                            break;
+                        }
                        await SetBackendState(BackEndState.ScanAny);
                        break;
                     }
@@ -172,15 +184,8 @@ namespace BackendGUI
                             _dMoveIn, 15000);
                         if (resultMoveIn.Result)
                         {
-                            lblCommand.Text = @"Container Move Standard";
-                            _dMoveOut = DateTime.Now;
-                            lbMoveOut.Text = _dMoveOut.ToString(Mes.DateTimeStringFormat);
-                            var resultMoveStd = await Mes.ExecuteMoveStandard(_mesData, oContainerStatus.ContainerName.Value, _dMoveOut, null, 30000);
-                            await SetBackendState(resultMoveStd.Result
-                                ? BackEndState.ScanUnitSerialNumber
-                                : BackEndState.MoveInOkMoveFail);
-
                             //Consume Component
+                            lblCommand.Text = @"Component Consume.";
                             var listIssue = new List<dynamic>();
                             if (_backendComponent.MasterCarton.Enabled) listIssue.Add(_backendComponent.MasterCarton.ToIssueActualDetail());
                             if (_backendComponent.MasterCartonLabel.Enabled) listIssue.Add(_backendComponent.MasterCartonLabel.ToIssueActualDetail());
@@ -189,9 +194,22 @@ namespace BackendGUI
 
                             if (listIssue.Count > 0)
                             {
-                                await Mes.ExecuteComponentIssue(_mesData, oContainerStatus.ContainerName.Value,
+                                var transIssue = await Mes.ExecuteComponentIssue(_mesData, oContainerStatus.ContainerName.Value,
                                     listIssue);
+                                if (!transIssue.Result)
+                                {
+                                    await SetBackendState(BackEndState.ComponentIssueFailed);
+                                    break;
+                                }
                             }
+
+                            lblCommand.Text = @"Container Move Standard";
+                            _dMoveOut = DateTime.Now;
+                            lbMoveOut.Text = _dMoveOut.ToString(Mes.DateTimeStringFormat);
+                            var resultMoveStd = await Mes.ExecuteMoveStandard(_mesData, oContainerStatus.ContainerName.Value, _dMoveOut, null, 30000);
+                            await SetBackendState(resultMoveStd.Result
+                                ? BackEndState.ScanUnitSerialNumber
+                                : BackEndState.MoveInOkMoveFail);
 
                             //Update Counter
                             if (resultMoveStd.Result)
@@ -241,6 +259,16 @@ namespace BackendGUI
                     lblCommand.ForeColor = Color.Red;
                     lblCommand.Text = @"Wait Preparation";
                     btnStartPreparation.Enabled = true;
+                    break;
+                case BackEndState.ComponentNotFound:
+                    lblCommand.ForeColor = Color.Red;
+                    _readScanner = false;
+                    lblCommand.Text = @"Component Not Found";
+                    break;
+                case BackEndState.ComponentIssueFailed:
+                    lblCommand.ForeColor = Color.Red;
+                    _readScanner = false;
+                    lblCommand.Text = @"Component Issue Failed.";
                     break;
             }
         }
@@ -390,7 +418,7 @@ namespace BackendGUI
                 var oStatusCodeList = await Mes.GetListResourceStatusCode(_mesData);
                 if (oStatusCodeList != null)
                 {
-                    Cb_StatusCode.DataSource = oStatusCodeList;
+                    Cb_StatusCode.DataSource = oStatusCodeList.Where(x=>x.Name.IndexOf("BE", StringComparison.Ordinal)==0).ToList();
                 }
             }
             catch (Exception ex)
@@ -447,59 +475,114 @@ namespace BackendGUI
                             if (scanned.Length >= 10)
                             {
                                 var valid = _mesData.ManufacturingOrder.MaterialList.Where(x =>
-                                    x.Product.Name.IndexOf(scanned.Substring(0, 10), StringComparison.Ordinal)==0 && x.wikScanning.Value == "X").ToList();
+                                    x.Product.Name.IndexOf(scanned.Substring(0, 10), StringComparison.Ordinal)==0).ToList();
                                 if (valid.Count>0)
                                 {
                                     var distinct = scanned.Substring(0, 3);
                                     //distinguish component
-                                    if (_backendComponent.MasterCarton.Enabled)
-                                    {
+                                    
                                         if (distinct == "801" || distinct == "820")
                                         {
-                                            _backendComponent.MasterCarton.Value = scanned;
-                                            _backendComponent.MasterCarton.QuantityRequired =
-                                                valid[0].QtyRequired.Value;
-                                            Tb_MasterCarton.Text = scanned;
-                                        }
-
+                                            if (_backendComponent.MasterCarton.Enabled)
+                                            {
+                                                _backendComponent.MasterCarton.Value = scanned;
+                                                _backendComponent.MasterCarton.QuantityRequired =
+                                                    valid[0].QtyRequired.Value;
+                                                Tb_MasterCarton.Text = scanned;
+                                                if (valid[0].wikScanning != "X" || valid[0].wikScanning==null)
+                                                {
+                                                    await SetBackendState(BackEndState.WrongComponent);
+                                                    break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                await SetBackendState(BackEndState.WrongComponent);
+                                                break;
+                                            }
                                     }
-                                    if (_backendComponent.ColorBox.Enabled)
+                                    
+                                    if (distinct == "802")
                                     {
-                                        if (distinct == "802")
+                                        if (_backendComponent.ColorBox.Enabled)
                                         {
                                             _backendComponent.ColorBox.Value = scanned;
                                             _backendComponent.ColorBox.QuantityRequired = valid[0].QtyRequired.Value;
                                             Tb_ColorBox.Text = scanned;
+                                            if (valid[0].wikScanning != "X" || valid[0].wikScanning == null)
+                                            {
+                                                await SetBackendState(BackEndState.WrongComponent);
+                                                break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            await SetBackendState(BackEndState.WrongComponent);
+                                            break;
                                         }
                                     }
-                                    if (_backendComponent.ColorBoxLabel.Enabled && _backendComponent.ColorBoxLabel.Value!=null)
+                                    
+                                    if (distinct == "809" && _backendComponent.ColorBoxLabel.Value == null)
                                     {
-                                        if (distinct == "809")
+                                        if (_backendComponent.ColorBoxLabel.Enabled)
                                         {
                                             _backendComponent.ColorBoxLabel.Value = scanned;
                                             _backendComponent.ColorBoxLabel.QuantityRequired = valid[0].QtyRequired.Value;
                                             Tb_ColorBoxLabel.Text = scanned;
+                                            if (valid[0].wikScanning != "X" || valid[0].wikScanning == null)
+                                            {
+                                                await SetBackendState(BackEndState.WrongComponent);
+                                                break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            await SetBackendState(BackEndState.WrongComponent);
+                                            break;
                                         }
                                     }
-                                    if (_backendComponent.MasterCartonLabel.Enabled && _backendComponent.MasterCartonLabel.Value != null)
+                                    else
                                     {
-                                        if (distinct == "809")
+
+                                        if (distinct == "809" && _backendComponent.MasterCartonLabel.Value == null 
+                                                              && !_backendComponent.ColorBoxLabel.Value.Equals(scanned))
                                         {
-                                            _backendComponent.MasterCartonLabel.Value = scanned;
-                                            _backendComponent.MasterCartonLabel.QuantityRequired = valid[0].QtyRequired.Value;
-                                            Tb_MasterCartonLabel.Text = scanned;
+                                            if (_backendComponent.MasterCartonLabel.Enabled)
+                                            {
+                                                _backendComponent.MasterCartonLabel.Value = scanned;
+                                                _backendComponent.MasterCartonLabel.QuantityRequired =
+                                                    valid[0].QtyRequired.Value;
+                                                Tb_MasterCartonLabel.Text = scanned;
+                                                if (valid[0].wikScanning != "X" || valid[0].wikScanning == null)
+                                                {
+                                                    await SetBackendState(BackEndState.WrongComponent);
+                                                    break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                await SetBackendState(BackEndState.WrongComponent);
+                                                break;
+                                            }
                                         }
+                                    }
+
+                                    if (distinct != "809" && distinct != "802" &&
+                                        !(distinct == "801" || distinct == "820"))
+                                    {
+                                        await SetBackendState(BackEndState.WrongComponent);
+                                        break;
                                     }
                                 }
                                 else
                                 {
-                                    await SetBackendState(BackEndState.WrongComponent);
+                                    await SetBackendState(BackEndState.ComponentNotFound);
                                     break;
                                 }
                             }
                             if (_backendComponent.Completed)
                             {
-                                await SetBackendState(BackEndState.UpdateMoveInMove);
+                                 await SetBackendState(BackEndState.UpdateMoveInMove);
                             }
                             break;
                     }
@@ -526,6 +609,17 @@ namespace BackendGUI
             Tb_ProductDesc.Clear();
             Tb_PpaQty.Clear();
             pictureBox1.ImageLocation = null;
+
+            lblColorBox.Visible = false;
+            lblColorBoxLabel.Visible = false;
+            lblMasterCarton.Visible = false;
+            lblMasterCartonLabel.Visible = false;
+
+            Tb_ColorBox.Visible = false;
+            Tb_ColorBoxLabel.Visible = false;
+            Tb_MasterCarton.Visible = false;
+            Tb_MasterCartonLabel.Visible = false;
+
             ClrContainer();
         }
       
@@ -686,6 +780,7 @@ namespace BackendGUI
             await GetStatusOfResource();
             if (result)
             {
+                await SetBackendState(BackEndState.WaitPreparation);
                 btnFinishPreparation.Enabled = true;
                 btnStartPreparation.Enabled = false;
             }
@@ -695,6 +790,34 @@ namespace BackendGUI
         private void Tb_Scanner_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void Dg_Maintenance_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            try
+            {
+                foreach (DataGridViewRow row in Dg_Maintenance.Rows)
+                {
+                    //Console.WriteLine(Convert.ToString(row.Cells["MaintenanceState"].Value));
+                    if (Convert.ToString(row.Cells["MaintenanceState"].Value) == "Pending")
+                    {
+                        row.DefaultCellStyle.BackColor = Color.Yellow;
+                    }
+                    else if (Convert.ToString(row.Cells["MaintenanceState"].Value) == "Due")
+                    {
+                        row.DefaultCellStyle.BackColor = Color.Orange;
+                    }
+                    else if (Convert.ToString(row.Cells["MaintenanceState"].Value) == "Past Due")
+                    {
+                        row.DefaultCellStyle.BackColor = Color.Red;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Source = AppSettings.AssemblyName == ex.Source ? MethodBase.GetCurrentMethod()?.Name : MethodBase.GetCurrentMethod()?.Name + "." + ex.Source;
+                EventLogUtil.LogErrorEvent(ex.Source, ex);
+            }
         }
     }
 }

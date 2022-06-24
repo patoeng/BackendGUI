@@ -14,6 +14,8 @@
         Done,
         WrongPosition,
         WrongComponent,
+        ComponentNotFound,
         WaitPreparation,
+        ComponentIssueFailed
     }
 }

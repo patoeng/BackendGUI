@@ -55,13 +55,13 @@ namespace BackendGUI
             this.btnFinishPreparation = new ComponentFactory.Krypton.Toolkit.KryptonButton();
             this.btnStartPreparation = new ComponentFactory.Krypton.Toolkit.KryptonButton();
             this.kryptonPanel6 = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
-            this.label8 = new System.Windows.Forms.Label();
+            this.lblMasterCartonLabel = new System.Windows.Forms.Label();
             this.Tb_MasterCartonLabel = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.lblMasterCarton = new System.Windows.Forms.Label();
             this.Tb_MasterCarton = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
-            this.label5 = new System.Windows.Forms.Label();
+            this.lblColorBoxLabel = new System.Windows.Forms.Label();
             this.Tb_ColorBoxLabel = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
-            this.label16 = new System.Windows.Forms.Label();
+            this.lblColorBox = new System.Windows.Forms.Label();
             this.Tb_ColorBox = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
             this.kryptonPage2 = new ComponentFactory.Krypton.Navigator.KryptonPage();
             this.kryptonGroupBox2 = new ComponentFactory.Krypton.Toolkit.KryptonGroupBox();
@@ -246,7 +246,7 @@ namespace BackendGUI
             this.kryptonPage4});
             this.kryptonNavigator1.Palette = this.PPAPalette;
             this.kryptonNavigator1.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Custom;
-            this.kryptonNavigator1.SelectedIndex = 0;
+            this.kryptonNavigator1.SelectedIndex = 1;
             this.kryptonNavigator1.Size = new System.Drawing.Size(765, 479);
             this.kryptonNavigator1.StateCommon.Bar.BarPaddingInside = new System.Windows.Forms.Padding(0);
             this.kryptonNavigator1.StateCommon.Bar.BarPaddingOnly = new System.Windows.Forms.Padding(0);
@@ -521,11 +521,11 @@ namespace BackendGUI
             this.btnResetState.Location = new System.Drawing.Point(619, 13);
             this.btnResetState.Margin = new System.Windows.Forms.Padding(4);
             this.btnResetState.Name = "btnResetState";
-            this.btnResetState.OverrideDefault.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(92)))), ((int)(((byte)(184)))), ((int)(((byte)(116)))));
-            this.btnResetState.OverrideDefault.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(143)))), ((int)(((byte)(81)))));
+            this.btnResetState.OverrideDefault.Back.Color1 = System.Drawing.Color.Green;
+            this.btnResetState.OverrideDefault.Back.Color2 = System.Drawing.Color.Green;
             this.btnResetState.OverrideDefault.Back.ColorAngle = 45F;
-            this.btnResetState.OverrideDefault.Border.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(6)))), ((int)(((byte)(142)))), ((int)(((byte)(254)))));
-            this.btnResetState.OverrideDefault.Border.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(8)))), ((int)(((byte)(142)))), ((int)(((byte)(254)))));
+            this.btnResetState.OverrideDefault.Border.Color1 = System.Drawing.Color.Green;
+            this.btnResetState.OverrideDefault.Border.Color2 = System.Drawing.Color.Green;
             this.btnResetState.OverrideDefault.Border.ColorAngle = 45F;
             this.btnResetState.OverrideDefault.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
             | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
@@ -550,11 +550,11 @@ namespace BackendGUI
             this.btnResetState.StateCommon.Content.ShortText.Color1 = System.Drawing.Color.White;
             this.btnResetState.StateCommon.Content.ShortText.Color2 = System.Drawing.Color.White;
             this.btnResetState.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnResetState.StatePressed.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(92)))), ((int)(((byte)(184)))), ((int)(((byte)(116)))));
-            this.btnResetState.StatePressed.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(143)))), ((int)(((byte)(81)))));
+            this.btnResetState.StatePressed.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.btnResetState.StatePressed.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
             this.btnResetState.StatePressed.Back.ColorAngle = 135F;
-            this.btnResetState.StatePressed.Border.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(145)))), ((int)(((byte)(198)))));
-            this.btnResetState.StatePressed.Border.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(121)))), ((int)(((byte)(206)))));
+            this.btnResetState.StatePressed.Border.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.btnResetState.StatePressed.Border.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
             this.btnResetState.StatePressed.Border.ColorAngle = 135F;
             this.btnResetState.StatePressed.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
             | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
@@ -655,7 +655,11 @@ namespace BackendGUI
             this.btnCallMaintenance.StateCommon.Content.ShortText.Color1 = System.Drawing.Color.White;
             this.btnCallMaintenance.StateCommon.Content.ShortText.Color2 = System.Drawing.Color.White;
             this.btnCallMaintenance.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnCallMaintenance.StatePressed.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
+            this.btnCallMaintenance.StatePressed.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
             this.btnCallMaintenance.StatePressed.Back.ColorAngle = 135F;
+            this.btnCallMaintenance.StatePressed.Border.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
+            this.btnCallMaintenance.StatePressed.Border.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
             this.btnCallMaintenance.StatePressed.Border.ColorAngle = 135F;
             this.btnCallMaintenance.StatePressed.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
             | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
@@ -714,6 +718,8 @@ namespace BackendGUI
             this.btnFinishPreparation.StateDisabled.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
             | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
             | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right)));
+            this.btnFinishPreparation.StatePressed.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(64)))), ((int)(((byte)(32)))));
+            this.btnFinishPreparation.StatePressed.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(64)))), ((int)(((byte)(32)))));
             this.btnFinishPreparation.StatePressed.Back.ColorAngle = 135F;
             this.btnFinishPreparation.StatePressed.Border.ColorAngle = 135F;
             this.btnFinishPreparation.StatePressed.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
@@ -768,7 +774,16 @@ namespace BackendGUI
             this.btnStartPreparation.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnStartPreparation.StateDisabled.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.btnStartPreparation.StateDisabled.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.btnStartPreparation.StateDisabled.Border.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.btnStartPreparation.StateDisabled.Border.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.btnStartPreparation.StateDisabled.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
+            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
+            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right)));
+            this.btnStartPreparation.StatePressed.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.btnStartPreparation.StatePressed.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
             this.btnStartPreparation.StatePressed.Back.ColorAngle = 135F;
+            this.btnStartPreparation.StatePressed.Border.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.btnStartPreparation.StatePressed.Border.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
             this.btnStartPreparation.StatePressed.Border.ColorAngle = 135F;
             this.btnStartPreparation.StatePressed.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
             | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
@@ -789,13 +804,13 @@ namespace BackendGUI
             // 
             // kryptonPanel6
             // 
-            this.kryptonPanel6.Controls.Add(this.label8);
+            this.kryptonPanel6.Controls.Add(this.lblMasterCartonLabel);
             this.kryptonPanel6.Controls.Add(this.Tb_MasterCartonLabel);
-            this.kryptonPanel6.Controls.Add(this.label7);
+            this.kryptonPanel6.Controls.Add(this.lblMasterCarton);
             this.kryptonPanel6.Controls.Add(this.Tb_MasterCarton);
-            this.kryptonPanel6.Controls.Add(this.label5);
+            this.kryptonPanel6.Controls.Add(this.lblColorBoxLabel);
             this.kryptonPanel6.Controls.Add(this.Tb_ColorBoxLabel);
-            this.kryptonPanel6.Controls.Add(this.label16);
+            this.kryptonPanel6.Controls.Add(this.lblColorBox);
             this.kryptonPanel6.Controls.Add(this.Tb_ColorBox);
             this.kryptonPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.kryptonPanel6.Location = new System.Drawing.Point(3, 66);
@@ -805,17 +820,18 @@ namespace BackendGUI
             this.kryptonPanel6.StateCommon.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
             this.kryptonPanel6.TabIndex = 1;
             // 
-            // label8
+            // lblMasterCartonLabel
             // 
-            this.label8.AutoSize = true;
-            this.label8.BackColor = System.Drawing.Color.Transparent;
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label8.ForeColor = System.Drawing.Color.Black;
-            this.label8.Location = new System.Drawing.Point(397, 97);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(140, 17);
-            this.label8.TabIndex = 30;
-            this.label8.Text = "Master Carton Label:";
+            this.lblMasterCartonLabel.AutoSize = true;
+            this.lblMasterCartonLabel.BackColor = System.Drawing.Color.Transparent;
+            this.lblMasterCartonLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.lblMasterCartonLabel.ForeColor = System.Drawing.Color.Black;
+            this.lblMasterCartonLabel.Location = new System.Drawing.Point(397, 97);
+            this.lblMasterCartonLabel.Name = "lblMasterCartonLabel";
+            this.lblMasterCartonLabel.Size = new System.Drawing.Size(59, 17);
+            this.lblMasterCartonLabel.TabIndex = 30;
+            this.lblMasterCartonLabel.Text = "Label 2:";
+            this.lblMasterCartonLabel.Visible = false;
             // 
             // Tb_MasterCartonLabel
             // 
@@ -837,18 +853,20 @@ namespace BackendGUI
             this.Tb_MasterCartonLabel.StateCommon.Content.Padding = new System.Windows.Forms.Padding(1);
             this.Tb_MasterCartonLabel.TabIndex = 29;
             this.Tb_MasterCartonLabel.Text = "21014B90U000118200A";
+            this.Tb_MasterCartonLabel.Visible = false;
             // 
-            // label7
+            // lblMasterCarton
             // 
-            this.label7.AutoSize = true;
-            this.label7.BackColor = System.Drawing.Color.Transparent;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label7.ForeColor = System.Drawing.Color.Black;
-            this.label7.Location = new System.Drawing.Point(397, 30);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(101, 17);
-            this.label7.TabIndex = 28;
-            this.label7.Text = "Master Carton:";
+            this.lblMasterCarton.AutoSize = true;
+            this.lblMasterCarton.BackColor = System.Drawing.Color.Transparent;
+            this.lblMasterCarton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.lblMasterCarton.ForeColor = System.Drawing.Color.Black;
+            this.lblMasterCarton.Location = new System.Drawing.Point(397, 30);
+            this.lblMasterCarton.Name = "lblMasterCarton";
+            this.lblMasterCarton.Size = new System.Drawing.Size(101, 17);
+            this.lblMasterCarton.TabIndex = 28;
+            this.lblMasterCarton.Text = "Master Carton:";
+            this.lblMasterCarton.Visible = false;
             // 
             // Tb_MasterCarton
             // 
@@ -870,18 +888,20 @@ namespace BackendGUI
             this.Tb_MasterCarton.StateCommon.Content.Padding = new System.Windows.Forms.Padding(1);
             this.Tb_MasterCarton.TabIndex = 27;
             this.Tb_MasterCarton.Text = "21014B90U000118200A";
+            this.Tb_MasterCarton.Visible = false;
             // 
-            // label5
+            // lblColorBoxLabel
             // 
-            this.label5.AutoSize = true;
-            this.label5.BackColor = System.Drawing.Color.Transparent;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label5.ForeColor = System.Drawing.Color.Black;
-            this.label5.Location = new System.Drawing.Point(29, 97);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(111, 17);
-            this.label5.TabIndex = 26;
-            this.label5.Text = "Color Box Label:";
+            this.lblColorBoxLabel.AutoSize = true;
+            this.lblColorBoxLabel.BackColor = System.Drawing.Color.Transparent;
+            this.lblColorBoxLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.lblColorBoxLabel.ForeColor = System.Drawing.Color.Black;
+            this.lblColorBoxLabel.Location = new System.Drawing.Point(29, 97);
+            this.lblColorBoxLabel.Name = "lblColorBoxLabel";
+            this.lblColorBoxLabel.Size = new System.Drawing.Size(59, 17);
+            this.lblColorBoxLabel.TabIndex = 26;
+            this.lblColorBoxLabel.Text = "Label 1:";
+            this.lblColorBoxLabel.Visible = false;
             // 
             // Tb_ColorBoxLabel
             // 
@@ -903,18 +923,20 @@ namespace BackendGUI
             this.Tb_ColorBoxLabel.StateCommon.Content.Padding = new System.Windows.Forms.Padding(1);
             this.Tb_ColorBoxLabel.TabIndex = 25;
             this.Tb_ColorBoxLabel.Text = "21014B90U000118200A";
+            this.Tb_ColorBoxLabel.Visible = false;
             // 
-            // label16
+            // lblColorBox
             // 
-            this.label16.AutoSize = true;
-            this.label16.BackColor = System.Drawing.Color.Transparent;
-            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label16.ForeColor = System.Drawing.Color.Black;
-            this.label16.Location = new System.Drawing.Point(29, 30);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(72, 17);
-            this.label16.TabIndex = 24;
-            this.label16.Text = "Color Box:";
+            this.lblColorBox.AutoSize = true;
+            this.lblColorBox.BackColor = System.Drawing.Color.Transparent;
+            this.lblColorBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.lblColorBox.ForeColor = System.Drawing.Color.Black;
+            this.lblColorBox.Location = new System.Drawing.Point(29, 30);
+            this.lblColorBox.Name = "lblColorBox";
+            this.lblColorBox.Size = new System.Drawing.Size(72, 17);
+            this.lblColorBox.TabIndex = 24;
+            this.lblColorBox.Text = "Color Box:";
+            this.lblColorBox.Visible = false;
             // 
             // Tb_ColorBox
             // 
@@ -936,6 +958,7 @@ namespace BackendGUI
             this.Tb_ColorBox.StateCommon.Content.Padding = new System.Windows.Forms.Padding(1);
             this.Tb_ColorBox.TabIndex = 23;
             this.Tb_ColorBox.Text = "21014B90U000118200A";
+            this.Tb_ColorBox.Visible = false;
             // 
             // kryptonPage2
             // 
@@ -1201,6 +1224,7 @@ namespace BackendGUI
             | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right)));
             this.Dg_Maintenance.StateNormal.DataCell.Border.GraphicsHint = ComponentFactory.Krypton.Toolkit.PaletteGraphicsHint.AntiAlias;
             this.Dg_Maintenance.TabIndex = 64;
+            this.Dg_Maintenance.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.Dg_Maintenance_CellFormatting);
             // 
             // kryptonPage3
             // 
@@ -1893,13 +1917,13 @@ namespace BackendGUI
         private System.Windows.Forms.DataGridViewTextBoxColumn serialNumberDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn controlPointDataGridViewTextBoxColumn;
         private ComponentFactory.Krypton.Toolkit.KryptonPanel kryptonPanel6;
-        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label lblColorBox;
         private ComponentFactory.Krypton.Toolkit.KryptonTextBox Tb_ColorBox;
-        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label lblMasterCartonLabel;
         private ComponentFactory.Krypton.Toolkit.KryptonTextBox Tb_MasterCartonLabel;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label lblMasterCarton;
         private ComponentFactory.Krypton.Toolkit.KryptonTextBox Tb_MasterCarton;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lblColorBoxLabel;
         private ComponentFactory.Krypton.Toolkit.KryptonTextBox Tb_ColorBoxLabel;
     }
 }
