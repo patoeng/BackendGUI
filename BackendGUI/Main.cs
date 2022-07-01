@@ -224,7 +224,13 @@ namespace BackendGUI
                             
                             break;
                         }
-
+                        // check if fail by maintenance Past Due
+                        var transPastDue = Mes.GetMaintenancePastDue(_mesData.MaintenanceStatusDetails);
+                        if (transPastDue.Result)
+                        {
+                            KryptonMessageBox.Show(this, "This resource under maintenance, need to complete!", "Move In",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                         await SetBackendState(BackEndState.MoveInFail);
                     }
                     break;
@@ -294,6 +300,7 @@ namespace BackendGUI
                 var maintenanceStatusDetails = await Mes.GetMaintenanceStatusDetails(_mesData);
                 if (maintenanceStatusDetails != null)
                 {
+                    _mesData.SetMaintenanceStatusDetails(maintenanceStatusDetails);
                     Dg_Maintenance.DataSource = maintenanceStatusDetails;
                     Dg_Maintenance.Columns["Due"].Visible = false;
                     Dg_Maintenance.Columns["Warning"].Visible = false;
@@ -608,6 +615,7 @@ namespace BackendGUI
             Tb_Product.Clear();
             Tb_ProductDesc.Clear();
             Tb_PpaQty.Clear();
+            Tb_FinishedGoodCounter.Clear();
             pictureBox1.ImageLocation = null;
 
             lblColorBox.Visible = false;
