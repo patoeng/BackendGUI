@@ -11,6 +11,7 @@ using MesData;
 using MesData.Login;
 using OpcenterWikLibrary;
 using BackendGUI.Enumeration;
+using Camstar.WCF.ObjectStack;
 using MesData.Backend;
 
 namespace BackendGUI
@@ -41,6 +42,41 @@ namespace BackendGUI
 
             kryptonNavigator1.SelectedIndex = 0;
             EventLogUtil.LogEvent("Application Start");
+
+            //Prepare Maintenance Grid
+            var maintStrings = new[] { "Resource", "MaintenanceType", "MaintenanceReq", "NextDateDue", "NextThruputQtyDue", "MaintenanceState" };
+
+            for (int i = 0; i < Dg_Maintenance.Columns.Count; i++)
+            {
+                if (!maintStrings.Contains(Dg_Maintenance.Columns[i].DataPropertyName))
+                {
+                    Dg_Maintenance.Columns[i].Visible = false;
+                }
+                else
+                {
+                    switch (Dg_Maintenance.Columns[i].HeaderText)
+                    {
+
+                        case "MaintenanceType":
+                            Dg_Maintenance.Columns[i].HeaderText = @"Maintenance Type";
+                            break;
+                        case "MaintenanceReq":
+                            Dg_Maintenance.Columns[i].HeaderText = @"Maintenance Requirement";
+                            break;
+                        case "NextDateDue":
+                            Dg_Maintenance.Columns[i].HeaderText = @"Next Due Date";
+                            break;
+                        case "NextThruputQtyDue":
+                            Dg_Maintenance.Columns[i].HeaderText = @"Next Thruput Quantity Due";
+                            break;
+                        case "MaintenanceState":
+                            Dg_Maintenance.Columns[i].HeaderText = @"Maintenance State";
+                            _indexMaintenanceState = Dg_Maintenance.Columns[i].Index;
+                            break;
+                    }
+
+                }
+            }
         }
 
         public sealed override string Text
@@ -138,7 +174,7 @@ namespace BackendGUI
                                // Update PO information
                                Tb_PO.Text = oContainerStatus.MfgOrderName?.Value;
                                Tb_Product.Text = oContainerStatus.Product.Name;
-                               Tb_ProductDesc.Text = oContainerStatus.ProductDescription.Value;
+                               Tb_ProductDesc.Text = oContainerStatus.ProductDescription?.Value;
 
                                var img = await Mes.GetImage(_mesData, oContainerStatus.Product.Name);
                                pictureBox1.ImageLocation = img.Identifier.Value;
@@ -256,7 +292,7 @@ namespace BackendGUI
                     lblCommand.Text = @"Wrong product position";
                     break;
                 case BackEndState.WrongComponent:
-                    _readScanner = false;
+                    _readScanner = true;
                     lblCommand.ForeColor = Color.Red;
                     lblCommand.Text = @"Wrong Component";
                     break;
@@ -298,40 +334,15 @@ namespace BackendGUI
             try
             {
                 var maintenanceStatusDetails = await Mes.GetMaintenanceStatusDetails(_mesData);
+                _mesData.SetMaintenanceStatusDetails(maintenanceStatusDetails);
                 if (maintenanceStatusDetails != null)
                 {
-                    _mesData.SetMaintenanceStatusDetails(maintenanceStatusDetails);
-                    Dg_Maintenance.DataSource = maintenanceStatusDetails;
-                    Dg_Maintenance.Columns["Due"].Visible = false;
-                    Dg_Maintenance.Columns["Warning"].Visible = false;
-                    Dg_Maintenance.Columns["PastDue"].Visible = false;
-                    Dg_Maintenance.Columns["MaintenanceReqName"].Visible = false;
-                    Dg_Maintenance.Columns["MaintenanceReqDisplayName"].Visible = false;
-                    Dg_Maintenance.Columns["ResourceStatusCodeName"].Visible = false;
-                    Dg_Maintenance.Columns["UOMName"].Visible = false;
-                    Dg_Maintenance.Columns["ResourceName"].Visible = false;
-                    Dg_Maintenance.Columns["UOM2Name"].Visible = false;
-                    Dg_Maintenance.Columns["MaintenanceReqRev"].Visible = false;
-                    Dg_Maintenance.Columns["NextThruputQty2Warning"].Visible = false;
-                    Dg_Maintenance.Columns["NextThruputQty2Limit"].Visible = false;
-                    Dg_Maintenance.Columns["UOM2"].Visible = false;
-                    Dg_Maintenance.Columns["ThruputQty2"].Visible = false;
-                    Dg_Maintenance.Columns["Resource"].Visible = false;
-                    Dg_Maintenance.Columns["ResourceStatusCode"].Visible = false;
-                    Dg_Maintenance.Columns["NextThruputQty2Due"].Visible = false;
-                    Dg_Maintenance.Columns["MaintenanceClassName"].Visible = false;
-                    Dg_Maintenance.Columns["MaintenanceStatus"].Visible = false;
-                    Dg_Maintenance.Columns["ExportImportKey"].Visible = false;
-                    Dg_Maintenance.Columns["DisplayName"].Visible = false;
-                    Dg_Maintenance.Columns["Self"].Visible = false;
-                    Dg_Maintenance.Columns["IsEmpty"].Visible = false;
-                    Dg_Maintenance.Columns["FieldAction"].Visible = false;
-                    Dg_Maintenance.Columns["IgnoreTypeDifference"].Visible = false;
-                    Dg_Maintenance.Columns["ListItemAction"].Visible = false;
-                    Dg_Maintenance.Columns["ListItemIndex"].Visible = false;
-                    Dg_Maintenance.Columns["CDOTypeName"].Visible = false;
-                    Dg_Maintenance.Columns["key"].Visible = false;
+                    getMaintenanceStatusDetailsBindingSource.DataSource =
+                        new BindingList<GetMaintenanceStatusDetails>(maintenanceStatusDetails);
+                    Dg_Maintenance.DataSource = getMaintenanceStatusDetailsBindingSource;
+                    return;
                 }
+                getMaintenanceStatusDetailsBindingSource.Clear();
             }
             catch (Exception ex)
             {
@@ -454,6 +465,7 @@ namespace BackendGUI
         private bool _ignoreScanner;
         private BackendComponent _backendComponent;
         private DateTime _dMoveOut;
+        private readonly int _indexMaintenanceState;
 
         private async void Tb_Scanner_KeyUp(object sender, KeyEventArgs e)
         {
@@ -471,6 +483,7 @@ namespace BackendGUI
                             Tb_Scanner.Clear();
                             await SetBackendState(BackEndState.CheckUnitStatus);
                             break;
+                        case BackEndState.WrongComponent:
                         case BackEndState.ScanAny:
                             if (_backendComponent.Completed)
                             {
@@ -492,10 +505,6 @@ namespace BackendGUI
                                         {
                                             if (_backendComponent.MasterCarton.Enabled)
                                             {
-                                                _backendComponent.MasterCarton.Value = scanned;
-                                                _backendComponent.MasterCarton.QuantityRequired =
-                                                    valid[0].QtyRequired.Value;
-                                                Tb_MasterCarton.Text = scanned;
                                                 if (valid[0].wikScanning != "X" || valid[0].wikScanning==null)
                                                 {
                                                     await SetBackendState(BackEndState.WrongComponent);
@@ -507,15 +516,17 @@ namespace BackendGUI
                                                 await SetBackendState(BackEndState.WrongComponent);
                                                 break;
                                             }
+                                            _backendComponent.MasterCarton.Value = scanned;
+                                            _backendComponent.MasterCarton.QuantityRequired =
+                                                valid[0].QtyRequired.Value;
+                                            Tb_MasterCarton.Text = scanned;
                                     }
                                     
                                     if (distinct == "802")
                                     {
                                         if (_backendComponent.ColorBox.Enabled)
                                         {
-                                            _backendComponent.ColorBox.Value = scanned;
-                                            _backendComponent.ColorBox.QuantityRequired = valid[0].QtyRequired.Value;
-                                            Tb_ColorBox.Text = scanned;
+                                           
                                             if (valid[0].wikScanning != "X" || valid[0].wikScanning == null)
                                             {
                                                 await SetBackendState(BackEndState.WrongComponent);
@@ -527,15 +538,16 @@ namespace BackendGUI
                                             await SetBackendState(BackEndState.WrongComponent);
                                             break;
                                         }
+                                        _backendComponent.ColorBox.Value = scanned;
+                                        _backendComponent.ColorBox.QuantityRequired = valid[0].QtyRequired.Value;
+                                        Tb_ColorBox.Text = scanned;
                                     }
                                     
                                     if (distinct == "809" && _backendComponent.ColorBoxLabel.Value == null)
                                     {
                                         if (_backendComponent.ColorBoxLabel.Enabled)
                                         {
-                                            _backendComponent.ColorBoxLabel.Value = scanned;
-                                            _backendComponent.ColorBoxLabel.QuantityRequired = valid[0].QtyRequired.Value;
-                                            Tb_ColorBoxLabel.Text = scanned;
+                                           
                                             if (valid[0].wikScanning != "X" || valid[0].wikScanning == null)
                                             {
                                                 await SetBackendState(BackEndState.WrongComponent);
@@ -547,6 +559,9 @@ namespace BackendGUI
                                             await SetBackendState(BackEndState.WrongComponent);
                                             break;
                                         }
+                                        _backendComponent.ColorBoxLabel.Value = scanned;
+                                        _backendComponent.ColorBoxLabel.QuantityRequired = valid[0].QtyRequired.Value;
+                                        Tb_ColorBoxLabel.Text = scanned;
                                     }
                                     else
                                     {
@@ -556,10 +571,7 @@ namespace BackendGUI
                                         {
                                             if (_backendComponent.MasterCartonLabel.Enabled)
                                             {
-                                                _backendComponent.MasterCartonLabel.Value = scanned;
-                                                _backendComponent.MasterCartonLabel.QuantityRequired =
-                                                    valid[0].QtyRequired.Value;
-                                                Tb_MasterCartonLabel.Text = scanned;
+                                               
                                                 if (valid[0].wikScanning != "X" || valid[0].wikScanning == null)
                                                 {
                                                     await SetBackendState(BackEndState.WrongComponent);
@@ -571,6 +583,10 @@ namespace BackendGUI
                                                 await SetBackendState(BackEndState.WrongComponent);
                                                 break;
                                             }
+                                            _backendComponent.MasterCartonLabel.Value = scanned;
+                                            _backendComponent.MasterCartonLabel.QuantityRequired =
+                                                valid[0].QtyRequired.Value;
+                                            Tb_MasterCartonLabel.Text = scanned;
                                         }
                                     }
 
@@ -800,24 +816,24 @@ namespace BackendGUI
 
         }
 
-        private void Dg_Maintenance_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+       private void Dg_Maintenance_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             try
             {
                 foreach (DataGridViewRow row in Dg_Maintenance.Rows)
                 {
-                    //Console.WriteLine(Convert.ToString(row.Cells["MaintenanceState"].Value));
-                    if (Convert.ToString(row.Cells["MaintenanceState"].Value) == "Pending")
+                    switch (Convert.ToString(row.Cells[_indexMaintenanceState].Value))
                     {
-                        row.DefaultCellStyle.BackColor = Color.Yellow;
-                    }
-                    else if (Convert.ToString(row.Cells["MaintenanceState"].Value) == "Due")
-                    {
-                        row.DefaultCellStyle.BackColor = Color.Orange;
-                    }
-                    else if (Convert.ToString(row.Cells["MaintenanceState"].Value) == "Past Due")
-                    {
-                        row.DefaultCellStyle.BackColor = Color.Red;
+                        //Console.WriteLine(Convert.ToString(row.Cells["MaintenanceState"].Value));
+                        case "Pending":
+                            row.DefaultCellStyle.BackColor = Color.Yellow;
+                            break;
+                        case "Due":
+                            row.DefaultCellStyle.BackColor = Color.Orange;
+                            break;
+                        case "Past Due":
+                            row.DefaultCellStyle.BackColor = Color.Red;
+                            break;
                     }
                 }
             }
