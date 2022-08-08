@@ -106,22 +106,52 @@ namespace BackendGUI
             {
                 case BackEndState.PlaceUnit:
                     _readScanner = false;
+                    lblCommand.ForeColor = Color.Red;
+                    lblCommand.Text = @"Resource is not in ""Up"" condition!";
                     break;
                 case BackEndState.ScanUnitSerialNumber:
                     _readScanner = true;
+                    ClrContainer();
                     lblCommand.ForeColor = Color.LimeGreen;
                     lblCommand.Text = @"Scan Unit Serial Number!";
-                    ClrContainer();
+                    if (_mesData.ResourceStatusDetails == null || _mesData.ResourceStatusDetails?.Availability != "Up")
+                    {
+                        await SetBackendState(BackEndState.PlaceUnit);
+                        break;
+                    }
+                    // check if fail by maintenance Past Due
+                    var transPastDue = Mes.GetMaintenancePastDue(_mesData.MaintenanceStatusDetails);
+                    if (transPastDue.Result)
+                    {
+                        KryptonMessageBox.Show(this, "This resource under maintenance, need to complete!", "Move In",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        break;
+                    }
+
                     break;
                 case BackEndState.CheckUnitStatus:
-                    _readScanner = false;
                     lblCommand.Text = @"Checking Unit Status";
-                    var oContainerStatus = await Mes.GetContainerStatusDetails(_mesData, Tb_SerialNumber.Text, _mesData.DataCollectionName);
+                    if (_mesData.ResourceStatusDetails == null || _mesData.ResourceStatusDetails?.Availability != "Up")
+                    {
+                        await SetBackendState(BackEndState.PlaceUnit);
+                        break;
+                    }
+                    // check if fail by maintenance Past Due
+                    transPastDue = Mes.GetMaintenancePastDue(_mesData.MaintenanceStatusDetails);
+                    if (transPastDue.Result)
+                    {
+                        KryptonMessageBox.Show(this, "This resource under maintenance, need to complete!", "Move In",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        break;
+                    }
+                    _readScanner = false;
+                    var oContainerStatus = await Mes.GetContainerStatusDetails(_mesData, Tb_SerialNumber.Text,_mesData.DataCollectionName);
                     if (oContainerStatus != null)
                     {
                        if (oContainerStatus.Operation?.Name != _mesData.OperationName)
                        {
-                           await SetBackendState(BackEndState.WrongPosition);
+                           _wrongContainerPosition = oContainerStatus.Operation?.Name;
+                               await SetBackendState(BackEndState.WrongPosition);
                            break;
                        }
                        if (oContainerStatus.MfgOrderName?.ToString() != "" && _mesData.ManufacturingOrder==null)
@@ -197,6 +227,12 @@ namespace BackendGUI
                        await SetBackendState(BackEndState.ScanAny);
                        break;
                     }
+                    var containerStep = await Mes.GetCurrentContainerStep(_mesData, Tb_SerialNumber.Text); // try get operation pos
+                    if (containerStep!= null && !_mesData.OperationName.Contains(containerStep))
+                    {
+                        await SetBackendState(BackEndState.WrongPosition);
+                        break;
+                    }
                     await SetBackendState(BackEndState.UnitNotFound);
                     break;
                 case BackEndState.UnitNotFound:
@@ -212,7 +248,7 @@ namespace BackendGUI
                 case BackEndState.UpdateMoveInMove:
                     _readScanner = false;
                     lblCommand.ForeColor = Color.LimeGreen;
-                    lblCommand.Text = @"Moving Container...";
+                    lblCommand.Text = @"Container Move In";
                     oContainerStatus = await Mes.GetContainerStatusDetails(_mesData, Tb_SerialNumber.Text, _mesData.DataCollectionName);
                     if (oContainerStatus != null)
                     {
@@ -221,7 +257,7 @@ namespace BackendGUI
                         if (resultMoveIn.Result)
                         {
                             //Consume Component
-                            lblCommand.Text = @"Component Consume.";
+                            lblCommand.Text = @"Container Component Issue";
                             var listIssue = new List<dynamic>();
                             if (_backendComponent.MasterCarton.Enabled) listIssue.Add(_backendComponent.MasterCarton.ToIssueActualDetail());
                             if (_backendComponent.MasterCartonLabel.Enabled) listIssue.Add(_backendComponent.MasterCartonLabel.ToIssueActualDetail());
@@ -251,9 +287,9 @@ namespace BackendGUI
                             if (resultMoveStd.Result)
                             {
 
+                                await Mes.UpdateCounter(_mesData,1);
                                 var mfgOrder = await Mes.GetMfgOrder(_mesData, _mesData.ManufacturingOrder.Name?.ToString());
                                 _mesData.SetManufacturingOrder(mfgOrder);
-                                await Mes.UpdateCounter(_mesData,1);
                                 var count = await Mes.GetCounterFromMfgOrder(_mesData);
                                 Tb_PpaQty.Text = count.ToString();
                             }
@@ -261,7 +297,7 @@ namespace BackendGUI
                             break;
                         }
                         // check if fail by maintenance Past Due
-                        var transPastDue = Mes.GetMaintenancePastDue(_mesData.MaintenanceStatusDetails);
+                         transPastDue = Mes.GetMaintenancePastDue(_mesData.MaintenanceStatusDetails);
                         if (transPastDue.Result)
                         {
                             KryptonMessageBox.Show(this, "This resource under maintenance, need to complete!", "Move In",
@@ -289,7 +325,7 @@ namespace BackendGUI
                 case BackEndState.WrongPosition:
                     _readScanner = false;
                     lblCommand.ForeColor = Color.Red;
-                    lblCommand.Text = @"Wrong product position";
+                    lblCommand.Text = $@"Wrong Operation, Container in {_wrongContainerPosition}";
                     break;
                 case BackEndState.WrongComponent:
                     _readScanner = true;
@@ -304,8 +340,8 @@ namespace BackendGUI
                     break;
                 case BackEndState.ComponentNotFound:
                     lblCommand.ForeColor = Color.Red;
-                    _readScanner = false;
-                    lblCommand.Text = @"Component Not Found";
+                    _readScanner = true;
+                    lblCommand.Text = @"Cannot Find Component in Bill of Material";
                     break;
                 case BackEndState.ComponentIssueFailed:
                     lblCommand.ForeColor = Color.Red;
@@ -340,9 +376,40 @@ namespace BackendGUI
                     getMaintenanceStatusDetailsBindingSource.DataSource =
                         new BindingList<GetMaintenanceStatusDetails>(maintenanceStatusDetails);
                     Dg_Maintenance.DataSource = getMaintenanceStatusDetailsBindingSource;
-                    return;
+                    //get past due, warning, and tolerance
+                    var pastDue = maintenanceStatusDetails.Where(x => x.MaintenanceState == "Past Due").ToList();
+                    var due = maintenanceStatusDetails.Where(x => x.MaintenanceState == "Due").ToList();
+                    var pending = maintenanceStatusDetails.Where(x => x.MaintenanceState == "Pending").ToList();
+
+                    if (pastDue.Count > 0)
+                    {
+                        lblResMaintMesg.Text = @"Resource Maintenance Past Due";
+                        lblResMaintMesg.BackColor = Color.Red;
+                        lblResMaintMesg.Visible = true;
+                        if (_mesData?.ResourceStatusDetails?.Reason?.Name != "Planned Maintenance")
+                        {
+                            await Mes.SetResourceStatus(_mesData, "BE - Planned Downtime", "Planned Maintenance");
+                        }
+                        return;
+                    }
+                    if (due.Count > 0)
+                    {
+                        lblResMaintMesg.Text = @"Resource Maintenance Due";
+                        lblResMaintMesg.BackColor = Color.Orange;
+                        lblResMaintMesg.Visible = true;
+                        return;
+                    }
+                    if (pending.Count > 0)
+                    {
+                        lblResMaintMesg.Text = @"Resource Maintenance Pending";
+                        lblResMaintMesg.BackColor = Color.Yellow;
+                        lblResMaintMesg.Visible = true;
+                        return;
+                    }
                 }
-                getMaintenanceStatusDetailsBindingSource.Clear();
+                lblResMaintMesg.Visible = false;
+                lblResMaintMesg.Text = "";
+                getMaintenanceStatusDetailsBindingSource.DataSource = null;
             }
             catch (Exception ex)
             {
@@ -466,6 +533,7 @@ namespace BackendGUI
         private BackendComponent _backendComponent;
         private DateTime _dMoveOut;
         private readonly int _indexMaintenanceState;
+        private string _wrongContainerPosition;
 
         private async void Tb_Scanner_KeyUp(object sender, KeyEventArgs e)
         {
@@ -483,6 +551,7 @@ namespace BackendGUI
                             Tb_Scanner.Clear();
                             await SetBackendState(BackEndState.CheckUnitStatus);
                             break;
+                        case BackEndState.ComponentNotFound:
                         case BackEndState.WrongComponent:
                         case BackEndState.ScanAny:
                             if (_backendComponent.Completed)
@@ -494,9 +563,9 @@ namespace BackendGUI
                             //validate
                             if (scanned.Length >= 10)
                             {
-                                var valid = _mesData.ManufacturingOrder.MaterialList.Where(x =>
+                                var valid = _mesData.ManufacturingOrder?.MaterialList.Where(x =>
                                     x.Product.Name.IndexOf(scanned.Substring(0, 10), StringComparison.Ordinal)==0).ToList();
-                                if (valid.Count>0)
+                                if (valid != null && valid.Count>0)
                                 {
                                     var distinct = scanned.Substring(0, 3);
                                     //distinguish component
@@ -543,7 +612,7 @@ namespace BackendGUI
                                         Tb_ColorBox.Text = scanned;
                                     }
                                     
-                                    if (distinct == "809" && _backendComponent.ColorBoxLabel.Value == null)
+                                    if (distinct == "809" && _backendComponent.ColorBoxLabel.Value == null || _backendComponent.ColorBoxLabel.Value == scanned)
                                     {
                                         if (_backendComponent.ColorBoxLabel.Enabled)
                                         {
@@ -567,7 +636,7 @@ namespace BackendGUI
                                     {
 
                                         if (distinct == "809" && _backendComponent.MasterCartonLabel.Value == null 
-                                                              && !_backendComponent.ColorBoxLabel.Value.Equals(scanned))
+                                                              && !_backendComponent.ColorBoxLabel.Value.Equals(scanned) || _backendComponent.MasterCartonLabel.Value==scanned)
                                         {
                                             if (_backendComponent.MasterCartonLabel.Enabled)
                                             {
@@ -734,18 +803,12 @@ namespace BackendGUI
                 Tb_FinishedGoodCounter.Text = list.Length.ToString();
             }
         }
-        private void Btn_SetPcba_Click(object sender, EventArgs e)
-        {
-            _tempComponentSetting.SaveFile();
-            _componentSetting = BackendComponentSetting.Load(BackendComponentSetting.FileName);
-        }
-
-       
+      
         private void kryptonNavigator1_Selecting(object sender, ComponentFactory.Krypton.Navigator.KryptonPageCancelEventArgs e)
         {
             if (e.Index != 1 && e.Index != 2) return;
 
-            using (var ss = new LoginForm24())
+            using (var ss = new LoginForm24(e.Index == 1 ? "Maintenance" : "Quality"))
             {
                 var dlg = ss.ShowDialog(this);
                 if (dlg == DialogResult.Abort)
@@ -762,8 +825,6 @@ namespace BackendGUI
                 if (ss.UserDetails.UserRole == UserRole.Maintenance && e.Index != 1) e.Cancel = true;
                 if (ss.UserDetails.UserRole == UserRole.Quality && e.Index != 2) e.Cancel = true;
             }
-
-
         }
 
         private async void btnCallMaintenance_Click(object sender, EventArgs e)
@@ -784,7 +845,7 @@ namespace BackendGUI
 
         private async void btnFinishPreparation_Click(object sender, EventArgs e)
         {
-            if (_mesData.ResourceStatusDetails.Reason.Name == "Maintenance") return;
+            if (_mesData.ResourceStatusDetails?.Reason.Name == "Maintenance") return;
             var result = await Mes.SetResourceStatus(_mesData, "BE - Productive Time", "Pass");
             await GetStatusOfResource();
             if (result)
@@ -799,6 +860,8 @@ namespace BackendGUI
         {
             ClearPo();
             if (_mesData.ResourceStatusDetails?.Reason?.Name=="Maintenance") return;
+            if (_mesData.ResourceStatusDetails?.Reason?.Name == "Planned Maintenance") return;
+
             _mesData.SetManufacturingOrder(null);
             var result = await Mes.SetResourceStatus(_mesData, "BE - Planned Downtime", "Preparation");
             await GetStatusOfResource();
@@ -841,6 +904,20 @@ namespace BackendGUI
             {
                 ex.Source = AppSettings.AssemblyName == ex.Source ? MethodBase.GetCurrentMethod()?.Name : MethodBase.GetCurrentMethod()?.Name + "." + ex.Source;
                 EventLogUtil.LogErrorEvent(ex.Source, ex);
+            }
+        }
+
+        private void Btn_SetConfig_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                _tempComponentSetting.SaveFile();
+                _componentSetting = BackendComponentSetting.Load(BackendComponentSetting.FileName);
+                KryptonMessageBox.Show("Saved Config File Successfully!");
+            }
+            catch
+            {
+                KryptonMessageBox.Show("Fail to save Config File!");
             }
         }
     }

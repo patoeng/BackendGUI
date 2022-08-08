@@ -64,6 +64,7 @@ namespace BackendGUI
             this.lblColorBox = new System.Windows.Forms.Label();
             this.Tb_ColorBox = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
             this.kryptonPage2 = new ComponentFactory.Krypton.Navigator.KryptonPage();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.kryptonGroupBox2 = new ComponentFactory.Krypton.Toolkit.KryptonGroupBox();
             this.label6 = new System.Windows.Forms.Label();
             this.Cb_StatusCode = new ComponentFactory.Krypton.Toolkit.KryptonComboBox();
@@ -127,8 +128,8 @@ namespace BackendGUI
             this.kryptonPanel12 = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
             this.Btn_SetConfig = new ComponentFactory.Krypton.Toolkit.KryptonButton();
             this.kryptonPage4 = new ComponentFactory.Krypton.Navigator.KryptonPage();
-            this.Tb_FinishedGoodCounter = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
-            this.label28 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.lblLoading = new System.Windows.Forms.Label();
             this.lblPo = new System.Windows.Forms.Label();
             this.kryptonDataGridView1 = new ComponentFactory.Krypton.Toolkit.KryptonDataGridView();
@@ -136,6 +137,9 @@ namespace BackendGUI
             this.serialNumberDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.controlPointDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.finishedGoodBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.label28 = new System.Windows.Forms.Label();
+            this.Tb_FinishedGoodCounter = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.kryptonPanel2 = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
             this.Tb_Product = new System.Windows.Forms.TextBox();
@@ -154,8 +158,12 @@ namespace BackendGUI
             this.label20 = new System.Windows.Forms.Label();
             this.Tb_StatusCode = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
             this.kryptonPanel1 = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
+            this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
+            this.kryptonPanel9 = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
+            this.lblResMaintMesg = new System.Windows.Forms.Label();
             this.lbTitle = new System.Windows.Forms.Label();
             this.MyTitle = new System.Windows.Forms.Label();
+            this.panel5 = new System.Windows.Forms.Panel();
             this.Logo = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -178,6 +186,7 @@ namespace BackendGUI
             this.kryptonPanel6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.kryptonPage2)).BeginInit();
             this.kryptonPage2.SuspendLayout();
+            this.tableLayoutPanel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.kryptonGroupBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.kryptonGroupBox2.Panel)).BeginInit();
             this.kryptonGroupBox2.Panel.SuspendLayout();
@@ -195,8 +204,11 @@ namespace BackendGUI
             this.kryptonPanel12.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.kryptonPage4)).BeginInit();
             this.kryptonPage4.SuspendLayout();
+            this.tableLayoutPanel8.SuspendLayout();
+            this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.kryptonDataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.finishedGoodBindingSource)).BeginInit();
+            this.panel3.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.kryptonPanel2)).BeginInit();
             this.kryptonPanel2.SuspendLayout();
@@ -207,6 +219,10 @@ namespace BackendGUI
             this.kryptonPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.kryptonPanel1)).BeginInit();
             this.kryptonPanel1.SuspendLayout();
+            this.tableLayoutPanel9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.kryptonPanel9)).BeginInit();
+            this.kryptonPanel9.SuspendLayout();
+            this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Logo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -252,15 +268,15 @@ namespace BackendGUI
             // 
             this.tableLayoutPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
             this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.kryptonPanel1, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.47772F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 87.52228F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 86F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1008, 561);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -272,11 +288,11 @@ namespace BackendGUI
             this.tableLayoutPanel2.Controls.Add(this.kryptonNavigator1, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel3, 1, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 73);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 89);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1002, 485);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(1002, 469);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // kryptonNavigator1
@@ -294,8 +310,8 @@ namespace BackendGUI
             this.kryptonPage4});
             this.kryptonNavigator1.Palette = this.PPAPalette;
             this.kryptonNavigator1.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Custom;
-            this.kryptonNavigator1.SelectedIndex = 1;
-            this.kryptonNavigator1.Size = new System.Drawing.Size(765, 479);
+            this.kryptonNavigator1.SelectedIndex = 0;
+            this.kryptonNavigator1.Size = new System.Drawing.Size(765, 463);
             this.kryptonNavigator1.StateCommon.Bar.BarPaddingInside = new System.Windows.Forms.Padding(0);
             this.kryptonNavigator1.StateCommon.Bar.BarPaddingOnly = new System.Windows.Forms.Padding(0);
             this.kryptonNavigator1.StateCommon.Bar.BarPaddingOutside = new System.Windows.Forms.Padding(0);
@@ -391,7 +407,7 @@ namespace BackendGUI
             this.kryptonPage1.Margin = new System.Windows.Forms.Padding(0);
             this.kryptonPage1.MinimumSize = new System.Drawing.Size(200, 200);
             this.kryptonPage1.Name = "kryptonPage1";
-            this.kryptonPage1.Size = new System.Drawing.Size(763, 444);
+            this.kryptonPage1.Size = new System.Drawing.Size(763, 428);
             this.kryptonPage1.Text = "Operator";
             this.kryptonPage1.ToolTipTitle = "Page ToolTip";
             this.kryptonPage1.UniqueName = "501B0C3FE96C4E3A44B7C108A74D7124";
@@ -415,7 +431,7 @@ namespace BackendGUI
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 57F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(763, 444);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(763, 428);
             this.tableLayoutPanel4.TabIndex = 1;
             // 
             // kryptonPanel5
@@ -431,7 +447,7 @@ namespace BackendGUI
             this.kryptonPanel5.Name = "kryptonPanel5";
             this.kryptonPanel5.Palette = this.PPAPalette;
             this.kryptonPanel5.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Custom;
-            this.kryptonPanel5.Size = new System.Drawing.Size(757, 57);
+            this.kryptonPanel5.Size = new System.Drawing.Size(757, 54);
             this.kryptonPanel5.StateCommon.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(68)))), ((int)(((byte)(101)))));
             this.kryptonPanel5.StateCommon.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(68)))), ((int)(((byte)(101)))));
             this.kryptonPanel5.TabIndex = 0;
@@ -521,7 +537,7 @@ namespace BackendGUI
             // 
             this.kryptonPanel7.Controls.Add(this.kryptonGroupBox1);
             this.kryptonPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.kryptonPanel7.Location = new System.Drawing.Point(3, 290);
+            this.kryptonPanel7.Location = new System.Drawing.Point(3, 274);
             this.kryptonPanel7.Name = "kryptonPanel7";
             this.kryptonPanel7.Palette = this.PPAPalette;
             this.kryptonPanel7.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Custom;
@@ -662,7 +678,7 @@ namespace BackendGUI
             this.kryptonPanel8.Controls.Add(this.btnFinishPreparation);
             this.kryptonPanel8.Controls.Add(this.btnStartPreparation);
             this.kryptonPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.kryptonPanel8.Location = new System.Drawing.Point(3, 389);
+            this.kryptonPanel8.Location = new System.Drawing.Point(3, 373);
             this.kryptonPanel8.Name = "kryptonPanel8";
             this.kryptonPanel8.Palette = this.PPAPalette;
             this.kryptonPanel8.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Custom;
@@ -861,9 +877,9 @@ namespace BackendGUI
             this.kryptonPanel6.Controls.Add(this.lblColorBox);
             this.kryptonPanel6.Controls.Add(this.Tb_ColorBox);
             this.kryptonPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.kryptonPanel6.Location = new System.Drawing.Point(3, 66);
+            this.kryptonPanel6.Location = new System.Drawing.Point(3, 63);
             this.kryptonPanel6.Name = "kryptonPanel6";
-            this.kryptonPanel6.Size = new System.Drawing.Size(757, 218);
+            this.kryptonPanel6.Size = new System.Drawing.Size(757, 205);
             this.kryptonPanel6.StateCommon.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
             this.kryptonPanel6.StateCommon.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
             this.kryptonPanel6.TabIndex = 1;
@@ -1011,20 +1027,35 @@ namespace BackendGUI
             // kryptonPage2
             // 
             this.kryptonPage2.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
-            this.kryptonPage2.Controls.Add(this.kryptonGroupBox2);
-            this.kryptonPage2.Controls.Add(this.Dg_Maintenance);
+            this.kryptonPage2.Controls.Add(this.tableLayoutPanel5);
             this.kryptonPage2.Flags = 65534;
             this.kryptonPage2.LastVisibleSet = true;
             this.kryptonPage2.MinimumSize = new System.Drawing.Size(50, 50);
             this.kryptonPage2.Name = "kryptonPage2";
-            this.kryptonPage2.Size = new System.Drawing.Size(763, 444);
+            this.kryptonPage2.Size = new System.Drawing.Size(763, 428);
             this.kryptonPage2.Text = "Maintenance";
             this.kryptonPage2.ToolTipTitle = "Page ToolTip";
             this.kryptonPage2.UniqueName = "A9D5235342774A400794C8B7FCD02899";
             // 
+            // tableLayoutPanel5
+            // 
+            this.tableLayoutPanel5.ColumnCount = 1;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel5.Controls.Add(this.kryptonGroupBox2, 0, 0);
+            this.tableLayoutPanel5.Controls.Add(this.Dg_Maintenance, 0, 1);
+            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.RowCount = 2;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 113F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(763, 428);
+            this.tableLayoutPanel5.TabIndex = 92;
+            // 
             // kryptonGroupBox2
             // 
-            this.kryptonGroupBox2.Location = new System.Drawing.Point(6, 7);
+            this.kryptonGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.kryptonGroupBox2.Location = new System.Drawing.Point(3, 3);
             this.kryptonGroupBox2.Name = "kryptonGroupBox2";
             // 
             // kryptonGroupBox2.Panel
@@ -1037,7 +1068,7 @@ namespace BackendGUI
             this.kryptonGroupBox2.Panel.Controls.Add(this.kryptonButton1);
             this.kryptonGroupBox2.Panel.Controls.Add(this.Cb_StatusReason);
             this.kryptonGroupBox2.Panel.Paint += new System.Windows.Forms.PaintEventHandler(this.kryptonGroupBox2_Panel_Paint);
-            this.kryptonGroupBox2.Size = new System.Drawing.Size(751, 125);
+            this.kryptonGroupBox2.Size = new System.Drawing.Size(757, 107);
             this.kryptonGroupBox2.StateCommon.Back.Color1 = System.Drawing.Color.White;
             this.kryptonGroupBox2.StateCommon.Back.Color2 = System.Drawing.Color.White;
             this.kryptonGroupBox2.StateCommon.Back.GraphicsHint = ComponentFactory.Krypton.Toolkit.PaletteGraphicsHint.AntiAlias;
@@ -1237,7 +1268,7 @@ namespace BackendGUI
             this.Dg_Maintenance.AllowUserToAddRows = false;
             this.Dg_Maintenance.AutoGenerateColumns = false;
             this.Dg_Maintenance.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            this.Dg_Maintenance.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.Dg_Maintenance.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.Dg_Maintenance.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.resourceDataGridViewTextBoxColumn,
             this.maintenanceTypeDataGridViewTextBoxColumn,
@@ -1286,12 +1317,15 @@ namespace BackendGUI
             this.keyDataGridViewTextBoxColumn,
             this.cDOTypeNameDataGridViewTextBoxColumn});
             this.Dg_Maintenance.DataSource = this.getMaintenanceStatusDetailsBindingSource;
-            this.Dg_Maintenance.Location = new System.Drawing.Point(3, 151);
+            this.Dg_Maintenance.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Dg_Maintenance.Location = new System.Drawing.Point(6, 119);
             this.Dg_Maintenance.Margin = new System.Windows.Forms.Padding(6);
             this.Dg_Maintenance.Name = "Dg_Maintenance";
+            this.Dg_Maintenance.Palette = this.PPAPalette;
+            this.Dg_Maintenance.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Custom;
             this.Dg_Maintenance.ReadOnly = true;
             this.Dg_Maintenance.RowHeadersWidth = 51;
-            this.Dg_Maintenance.Size = new System.Drawing.Size(751, 285);
+            this.Dg_Maintenance.Size = new System.Drawing.Size(751, 303);
             this.Dg_Maintenance.StateCommon.Background.Color1 = System.Drawing.Color.White;
             this.Dg_Maintenance.StateCommon.Background.Color2 = System.Drawing.Color.White;
             this.Dg_Maintenance.StateCommon.Background.GraphicsHint = ComponentFactory.Krypton.Toolkit.PaletteGraphicsHint.AntiAlias;
@@ -1707,7 +1741,7 @@ namespace BackendGUI
             this.kryptonPage3.LastVisibleSet = true;
             this.kryptonPage3.MinimumSize = new System.Drawing.Size(50, 50);
             this.kryptonPage3.Name = "kryptonPage3";
-            this.kryptonPage3.Size = new System.Drawing.Size(763, 444);
+            this.kryptonPage3.Size = new System.Drawing.Size(763, 428);
             this.kryptonPage3.Text = "Quality";
             this.kryptonPage3.ToolTipTitle = "Page ToolTip";
             this.kryptonPage3.UniqueName = "93024F31D9FB40C23D948F5CF665302C";
@@ -1725,7 +1759,7 @@ namespace BackendGUI
             this.tableLayoutPanel6.RowCount = 2;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 87.83784F));
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.16216F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(763, 444);
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(763, 428);
             this.tableLayoutPanel6.TabIndex = 0;
             // 
             // kryptonPanel10
@@ -1734,7 +1768,7 @@ namespace BackendGUI
             this.kryptonPanel10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.kryptonPanel10.Location = new System.Drawing.Point(3, 3);
             this.kryptonPanel10.Name = "kryptonPanel10";
-            this.kryptonPanel10.Size = new System.Drawing.Size(757, 383);
+            this.kryptonPanel10.Size = new System.Drawing.Size(757, 369);
             this.kryptonPanel10.StateCommon.Color1 = System.Drawing.Color.White;
             this.kryptonPanel10.StateCommon.Color2 = System.Drawing.Color.White;
             this.kryptonPanel10.TabIndex = 0;
@@ -1744,16 +1778,16 @@ namespace BackendGUI
             this.Ppg_Pcba.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Ppg_Pcba.Location = new System.Drawing.Point(0, 0);
             this.Ppg_Pcba.Name = "Ppg_Pcba";
-            this.Ppg_Pcba.Size = new System.Drawing.Size(757, 383);
+            this.Ppg_Pcba.Size = new System.Drawing.Size(757, 369);
             this.Ppg_Pcba.TabIndex = 0;
             // 
             // kryptonPanel12
             // 
             this.kryptonPanel12.Controls.Add(this.Btn_SetConfig);
             this.kryptonPanel12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.kryptonPanel12.Location = new System.Drawing.Point(3, 392);
+            this.kryptonPanel12.Location = new System.Drawing.Point(3, 378);
             this.kryptonPanel12.Name = "kryptonPanel12";
-            this.kryptonPanel12.Size = new System.Drawing.Size(757, 49);
+            this.kryptonPanel12.Size = new System.Drawing.Size(757, 47);
             this.kryptonPanel12.StateCommon.Color1 = System.Drawing.Color.White;
             this.kryptonPanel12.StateCommon.Color2 = System.Drawing.Color.White;
             this.kryptonPanel12.TabIndex = 0;
@@ -1804,8 +1838,8 @@ namespace BackendGUI
             | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right)));
             this.Btn_SetConfig.StatePressed.Border.Rounding = 20;
             this.Btn_SetConfig.StatePressed.Border.Width = 1;
-            this.Btn_SetConfig.StateTracking.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(143)))), ((int)(((byte)(81)))));
-            this.Btn_SetConfig.StateTracking.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(143)))), ((int)(((byte)(81)))));
+            this.Btn_SetConfig.StateTracking.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.Btn_SetConfig.StateTracking.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
             this.Btn_SetConfig.StateTracking.Back.ColorAngle = 45F;
             this.Btn_SetConfig.StateTracking.Border.Color1 = System.Drawing.Color.YellowGreen;
             this.Btn_SetConfig.StateTracking.Border.Color2 = System.Drawing.Color.YellowGreen;
@@ -1818,64 +1852,54 @@ namespace BackendGUI
             this.Btn_SetConfig.StateTracking.Border.Width = 1;
             this.Btn_SetConfig.TabIndex = 61;
             this.Btn_SetConfig.Values.Text = "SET";
-            this.Btn_SetConfig.Click += new System.EventHandler(this.Btn_SetPcba_Click);
+            this.Btn_SetConfig.Click += new System.EventHandler(this.Btn_SetConfig_Click);
             // 
             // kryptonPage4
             // 
             this.kryptonPage4.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
-            this.kryptonPage4.Controls.Add(this.Tb_FinishedGoodCounter);
-            this.kryptonPage4.Controls.Add(this.label28);
-            this.kryptonPage4.Controls.Add(this.lblLoading);
-            this.kryptonPage4.Controls.Add(this.lblPo);
-            this.kryptonPage4.Controls.Add(this.kryptonDataGridView1);
+            this.kryptonPage4.Controls.Add(this.tableLayoutPanel8);
             this.kryptonPage4.Flags = 65534;
             this.kryptonPage4.LastVisibleSet = true;
             this.kryptonPage4.MinimumSize = new System.Drawing.Size(50, 50);
             this.kryptonPage4.Name = "kryptonPage4";
-            this.kryptonPage4.Size = new System.Drawing.Size(763, 444);
+            this.kryptonPage4.Size = new System.Drawing.Size(763, 428);
             this.kryptonPage4.Text = "Finish Good Record";
             this.kryptonPage4.ToolTipTitle = "Page ToolTip";
             this.kryptonPage4.UniqueName = "CAEAF24E4B7B4E1F58A60A81E6387A42";
             // 
-            // Tb_FinishedGoodCounter
+            // tableLayoutPanel8
             // 
-            this.Tb_FinishedGoodCounter.Enabled = false;
-            this.Tb_FinishedGoodCounter.Location = new System.Drawing.Point(150, 401);
-            this.Tb_FinishedGoodCounter.Name = "Tb_FinishedGoodCounter";
-            this.Tb_FinishedGoodCounter.Size = new System.Drawing.Size(285, 33);
-            this.Tb_FinishedGoodCounter.StateCommon.Back.Color1 = System.Drawing.Color.White;
-            this.Tb_FinishedGoodCounter.StateCommon.Border.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.Tb_FinishedGoodCounter.StateCommon.Border.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.Tb_FinishedGoodCounter.StateCommon.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
-            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
-            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right)));
-            this.Tb_FinishedGoodCounter.StateCommon.Border.GraphicsHint = ComponentFactory.Krypton.Toolkit.PaletteGraphicsHint.AntiAlias;
-            this.Tb_FinishedGoodCounter.StateCommon.Border.Rounding = 20;
-            this.Tb_FinishedGoodCounter.StateCommon.Border.Width = 1;
-            this.Tb_FinishedGoodCounter.StateCommon.Content.Color1 = System.Drawing.Color.Gray;
-            this.Tb_FinishedGoodCounter.StateCommon.Content.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.Tb_FinishedGoodCounter.StateCommon.Content.Padding = new System.Windows.Forms.Padding(0);
-            this.Tb_FinishedGoodCounter.TabIndex = 113;
-            this.Tb_FinishedGoodCounter.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tableLayoutPanel8.ColumnCount = 1;
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel8.Controls.Add(this.panel2, 0, 0);
+            this.tableLayoutPanel8.Controls.Add(this.kryptonDataGridView1, 0, 1);
+            this.tableLayoutPanel8.Controls.Add(this.panel3, 0, 2);
+            this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel8.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel8.Name = "tableLayoutPanel8";
+            this.tableLayoutPanel8.RowCount = 3;
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 62F));
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(763, 428);
+            this.tableLayoutPanel8.TabIndex = 115;
             // 
-            // label28
+            // panel2
             // 
-            this.label28.AutoSize = true;
-            this.label28.BackColor = System.Drawing.Color.White;
-            this.label28.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label28.ForeColor = System.Drawing.Color.Black;
-            this.label28.Location = new System.Drawing.Point(16, 406);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(128, 19);
-            this.label28.TabIndex = 112;
-            this.label28.Text = "Total Serial Number";
+            this.panel2.Controls.Add(this.lblLoading);
+            this.panel2.Controls.Add(this.lblPo);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(3, 3);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(757, 56);
+            this.panel2.TabIndex = 0;
             // 
             // lblLoading
             // 
             this.lblLoading.AutoSize = true;
             this.lblLoading.BackColor = System.Drawing.Color.Yellow;
             this.lblLoading.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLoading.Location = new System.Drawing.Point(12, 14);
+            this.lblLoading.Location = new System.Drawing.Point(10, 4);
             this.lblLoading.Name = "lblLoading";
             this.lblLoading.Size = new System.Drawing.Size(121, 20);
             this.lblLoading.TabIndex = 111;
@@ -1888,7 +1912,7 @@ namespace BackendGUI
             this.lblPo.BackColor = System.Drawing.Color.White;
             this.lblPo.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPo.ForeColor = System.Drawing.Color.Black;
-            this.lblPo.Location = new System.Drawing.Point(11, 41);
+            this.lblPo.Location = new System.Drawing.Point(9, 24);
             this.lblPo.Name = "lblPo";
             this.lblPo.Size = new System.Drawing.Size(200, 25);
             this.lblPo.TabIndex = 110;
@@ -1906,10 +1930,11 @@ namespace BackendGUI
             this.serialNumberDataGridViewTextBoxColumn,
             this.controlPointDataGridViewTextBoxColumn});
             this.kryptonDataGridView1.DataSource = this.finishedGoodBindingSource;
-            this.kryptonDataGridView1.Location = new System.Drawing.Point(10, 73);
+            this.kryptonDataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.kryptonDataGridView1.Location = new System.Drawing.Point(3, 65);
             this.kryptonDataGridView1.Name = "kryptonDataGridView1";
             this.kryptonDataGridView1.ReadOnly = true;
-            this.kryptonDataGridView1.Size = new System.Drawing.Size(730, 322);
+            this.kryptonDataGridView1.Size = new System.Drawing.Size(757, 310);
             this.kryptonDataGridView1.TabIndex = 0;
             // 
             // idDataGridViewTextBoxColumn
@@ -1941,6 +1966,49 @@ namespace BackendGUI
             // 
             this.finishedGoodBindingSource.DataSource = typeof(MesData.FinishedGood);
             // 
+            // panel3
+            // 
+            this.panel3.Controls.Add(this.label28);
+            this.panel3.Controls.Add(this.Tb_FinishedGoodCounter);
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel3.Location = new System.Drawing.Point(3, 381);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(757, 44);
+            this.panel3.TabIndex = 1;
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.BackColor = System.Drawing.Color.White;
+            this.label28.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label28.ForeColor = System.Drawing.Color.Black;
+            this.label28.Location = new System.Drawing.Point(11, 11);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(128, 19);
+            this.label28.TabIndex = 112;
+            this.label28.Text = "Total Serial Number";
+            // 
+            // Tb_FinishedGoodCounter
+            // 
+            this.Tb_FinishedGoodCounter.Enabled = false;
+            this.Tb_FinishedGoodCounter.Location = new System.Drawing.Point(145, 6);
+            this.Tb_FinishedGoodCounter.Name = "Tb_FinishedGoodCounter";
+            this.Tb_FinishedGoodCounter.Size = new System.Drawing.Size(285, 33);
+            this.Tb_FinishedGoodCounter.StateCommon.Back.Color1 = System.Drawing.Color.White;
+            this.Tb_FinishedGoodCounter.StateCommon.Border.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.Tb_FinishedGoodCounter.StateCommon.Border.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.Tb_FinishedGoodCounter.StateCommon.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
+            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
+            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right)));
+            this.Tb_FinishedGoodCounter.StateCommon.Border.GraphicsHint = ComponentFactory.Krypton.Toolkit.PaletteGraphicsHint.AntiAlias;
+            this.Tb_FinishedGoodCounter.StateCommon.Border.Rounding = 20;
+            this.Tb_FinishedGoodCounter.StateCommon.Border.Width = 1;
+            this.Tb_FinishedGoodCounter.StateCommon.Content.Color1 = System.Drawing.Color.Gray;
+            this.Tb_FinishedGoodCounter.StateCommon.Content.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.Tb_FinishedGoodCounter.StateCommon.Content.Padding = new System.Windows.Forms.Padding(0);
+            this.Tb_FinishedGoodCounter.TabIndex = 113;
+            this.Tb_FinishedGoodCounter.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
             // tableLayoutPanel3
             // 
             this.tableLayoutPanel3.BackColor = System.Drawing.Color.White;
@@ -1956,7 +2024,7 @@ namespace BackendGUI
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 78.84615F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 21.15385F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 117F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(225, 479);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(225, 463);
             this.tableLayoutPanel3.TabIndex = 0;
             // 
             // kryptonPanel2
@@ -1971,7 +2039,7 @@ namespace BackendGUI
             this.kryptonPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.kryptonPanel2.Location = new System.Drawing.Point(3, 3);
             this.kryptonPanel2.Name = "kryptonPanel2";
-            this.kryptonPanel2.Size = new System.Drawing.Size(219, 279);
+            this.kryptonPanel2.Size = new System.Drawing.Size(219, 266);
             this.kryptonPanel2.StateCommon.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
             this.kryptonPanel2.StateCommon.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
             this.kryptonPanel2.TabIndex = 1;
@@ -2065,9 +2133,9 @@ namespace BackendGUI
             this.kryptonPanel3.Controls.Add(this.Tb_PpaQty);
             this.kryptonPanel3.Controls.Add(this.label18);
             this.kryptonPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.kryptonPanel3.Location = new System.Drawing.Point(3, 288);
+            this.kryptonPanel3.Location = new System.Drawing.Point(3, 275);
             this.kryptonPanel3.Name = "kryptonPanel3";
-            this.kryptonPanel3.Size = new System.Drawing.Size(219, 70);
+            this.kryptonPanel3.Size = new System.Drawing.Size(219, 67);
             this.kryptonPanel3.StateCommon.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
             this.kryptonPanel3.StateCommon.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
             this.kryptonPanel3.TabIndex = 2;
@@ -2116,7 +2184,7 @@ namespace BackendGUI
             this.kryptonPanel4.Controls.Add(this.label20);
             this.kryptonPanel4.Controls.Add(this.Tb_StatusCode);
             this.kryptonPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.kryptonPanel4.Location = new System.Drawing.Point(3, 364);
+            this.kryptonPanel4.Location = new System.Drawing.Point(3, 348);
             this.kryptonPanel4.Name = "kryptonPanel4";
             this.kryptonPanel4.Size = new System.Drawing.Size(219, 112);
             this.kryptonPanel4.StateCommon.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
@@ -2193,18 +2261,57 @@ namespace BackendGUI
             // 
             // kryptonPanel1
             // 
-            this.kryptonPanel1.Controls.Add(this.lbTitle);
-            this.kryptonPanel1.Controls.Add(this.MyTitle);
-            this.kryptonPanel1.Controls.Add(this.Logo);
+            this.kryptonPanel1.Controls.Add(this.tableLayoutPanel9);
             this.kryptonPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.kryptonPanel1.Location = new System.Drawing.Point(3, 3);
             this.kryptonPanel1.Name = "kryptonPanel1";
             this.kryptonPanel1.Palette = this.PPAPalette;
             this.kryptonPanel1.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Custom;
-            this.kryptonPanel1.Size = new System.Drawing.Size(1002, 64);
+            this.kryptonPanel1.Size = new System.Drawing.Size(1002, 80);
             this.kryptonPanel1.StateCommon.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
             this.kryptonPanel1.StateCommon.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
             this.kryptonPanel1.TabIndex = 1;
+            // 
+            // tableLayoutPanel9
+            // 
+            this.tableLayoutPanel9.ColumnCount = 2;
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 227F));
+            this.tableLayoutPanel9.Controls.Add(this.kryptonPanel9, 0, 0);
+            this.tableLayoutPanel9.Controls.Add(this.panel5, 1, 0);
+            this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel9.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel9.Name = "tableLayoutPanel9";
+            this.tableLayoutPanel9.RowCount = 1;
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel9.Size = new System.Drawing.Size(1002, 80);
+            this.tableLayoutPanel9.TabIndex = 62;
+            // 
+            // kryptonPanel9
+            // 
+            this.kryptonPanel9.Controls.Add(this.lblResMaintMesg);
+            this.kryptonPanel9.Controls.Add(this.lbTitle);
+            this.kryptonPanel9.Controls.Add(this.MyTitle);
+            this.kryptonPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.kryptonPanel9.Location = new System.Drawing.Point(3, 3);
+            this.kryptonPanel9.Name = "kryptonPanel9";
+            this.kryptonPanel9.Palette = this.PPAPalette;
+            this.kryptonPanel9.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Custom;
+            this.kryptonPanel9.Size = new System.Drawing.Size(769, 74);
+            this.kryptonPanel9.StateCommon.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
+            this.kryptonPanel9.StateCommon.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
+            this.kryptonPanel9.TabIndex = 1;
+            // 
+            // lblResMaintMesg
+            // 
+            this.lblResMaintMesg.AutoSize = true;
+            this.lblResMaintMesg.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblResMaintMesg.Location = new System.Drawing.Point(272, 13);
+            this.lblResMaintMesg.Name = "lblResMaintMesg";
+            this.lblResMaintMesg.Size = new System.Drawing.Size(50, 21);
+            this.lblResMaintMesg.TabIndex = 58;
+            this.lblResMaintMesg.Text = "Maint";
+            this.lblResMaintMesg.Visible = false;
             // 
             // lbTitle
             // 
@@ -2228,13 +2335,22 @@ namespace BackendGUI
             this.MyTitle.TabIndex = 55;
             this.MyTitle.Text = "Backend";
             // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.Logo);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel5.Location = new System.Drawing.Point(778, 3);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(221, 74);
+            this.panel5.TabIndex = 2;
+            // 
             // Logo
             // 
             this.Logo.Image = ((System.Drawing.Image)(resources.GetObject("Logo.Image")));
-            this.Logo.Location = new System.Drawing.Point(890, 10);
+            this.Logo.Location = new System.Drawing.Point(43, 13);
             this.Logo.Margin = new System.Windows.Forms.Padding(4);
             this.Logo.Name = "Logo";
-            this.Logo.Size = new System.Drawing.Size(108, 43);
+            this.Logo.Size = new System.Drawing.Size(128, 56);
             this.Logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.Logo.TabIndex = 54;
             this.Logo.TabStop = false;
@@ -2278,6 +2394,7 @@ namespace BackendGUI
             this.kryptonPanel6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.kryptonPage2)).EndInit();
             this.kryptonPage2.ResumeLayout(false);
+            this.tableLayoutPanel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.kryptonGroupBox2.Panel)).EndInit();
             this.kryptonGroupBox2.Panel.ResumeLayout(false);
             this.kryptonGroupBox2.Panel.PerformLayout();
@@ -2296,9 +2413,13 @@ namespace BackendGUI
             this.kryptonPanel12.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.kryptonPage4)).EndInit();
             this.kryptonPage4.ResumeLayout(false);
-            this.kryptonPage4.PerformLayout();
+            this.tableLayoutPanel8.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.kryptonDataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.finishedGoodBindingSource)).EndInit();
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.kryptonPanel2)).EndInit();
             this.kryptonPanel2.ResumeLayout(false);
@@ -2312,7 +2433,11 @@ namespace BackendGUI
             this.kryptonPanel4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.kryptonPanel1)).EndInit();
             this.kryptonPanel1.ResumeLayout(false);
-            this.kryptonPanel1.PerformLayout();
+            this.tableLayoutPanel9.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.kryptonPanel9)).EndInit();
+            this.kryptonPanel9.ResumeLayout(false);
+            this.kryptonPanel9.PerformLayout();
+            this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.Logo)).EndInit();
             this.ResumeLayout(false);
 
@@ -2326,9 +2451,6 @@ namespace BackendGUI
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private ComponentFactory.Krypton.Toolkit.KryptonPanel kryptonPanel1;
-        private System.Windows.Forms.PictureBox Logo;
-        private System.Windows.Forms.Label lbTitle;
-        private System.Windows.Forms.Label MyTitle;
         private ComponentFactory.Krypton.Toolkit.KryptonPanel kryptonPanel2;
         private ComponentFactory.Krypton.Toolkit.KryptonPanel kryptonPanel3;
         private ComponentFactory.Krypton.Toolkit.KryptonPanel kryptonPanel4;
@@ -2381,15 +2503,7 @@ namespace BackendGUI
         private System.Windows.Forms.PropertyGrid Ppg_Pcba;
         private ComponentFactory.Krypton.Toolkit.KryptonPanel kryptonPanel12;
         private ComponentFactory.Krypton.Toolkit.KryptonButton Btn_SetConfig;
-        private ComponentFactory.Krypton.Toolkit.KryptonDataGridView kryptonDataGridView1;
         private System.Windows.Forms.BindingSource finishedGoodBindingSource;
-        private System.Windows.Forms.Label lblLoading;
-        private System.Windows.Forms.Label lblPo;
-        private ComponentFactory.Krypton.Toolkit.KryptonTextBox Tb_FinishedGoodCounter;
-        private System.Windows.Forms.Label label28;
-        private System.Windows.Forms.DataGridViewTextBoxColumn idDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn serialNumberDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn controlPointDataGridViewTextBoxColumn;
         private ComponentFactory.Krypton.Toolkit.KryptonPanel kryptonPanel6;
         private System.Windows.Forms.Label lblColorBox;
         private ComponentFactory.Krypton.Toolkit.KryptonTextBox Tb_ColorBox;
@@ -2446,6 +2560,25 @@ namespace BackendGUI
         private System.Windows.Forms.DataGridViewTextBoxColumn listItemIndexDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn keyDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn cDOTypeNameDataGridViewTextBoxColumn;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel9;
+        private ComponentFactory.Krypton.Toolkit.KryptonPanel kryptonPanel9;
+        private System.Windows.Forms.Label lblResMaintMesg;
+        private System.Windows.Forms.Label lbTitle;
+        private System.Windows.Forms.Label MyTitle;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.PictureBox Logo;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Label lblLoading;
+        private System.Windows.Forms.Label lblPo;
+        private ComponentFactory.Krypton.Toolkit.KryptonDataGridView kryptonDataGridView1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn idDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn serialNumberDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn controlPointDataGridViewTextBoxColumn;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Label label28;
+        private ComponentFactory.Krypton.Toolkit.KryptonTextBox Tb_FinishedGoodCounter;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
     }
 }
 
