@@ -255,7 +255,8 @@ namespace BackendGUI
                     var containerStep = await Mes.GetCurrentContainerStep(_mesData, Tb_SerialNumber.Text); // try get operation pos
                     if (containerStep!= null && !_mesData.OperationName.Contains(containerStep))
                     {
-                        await SetBackendState(BackEndState.WrongPosition);
+                          _wrongContainerPosition = containerStep;
+                          await SetBackendState(BackEndState.WrongPosition);
                         break;
                     }
                     await SetBackendState(BackEndState.UnitNotFound);
