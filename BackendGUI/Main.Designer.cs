@@ -131,12 +131,9 @@ namespace BackendGUI
             this.kryptonPage4 = new ComponentFactory.Krypton.Navigator.KryptonPage();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.btnSynchronize = new ComponentFactory.Krypton.Toolkit.KryptonButton();
             this.lblLoading = new System.Windows.Forms.Label();
             this.lblPo = new System.Windows.Forms.Label();
-            this.kryptonDataGridView1 = new ComponentFactory.Krypton.Toolkit.KryptonDataGridView();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.finishedGoodBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.panel3 = new System.Windows.Forms.Panel();
             this.label28 = new System.Windows.Forms.Label();
@@ -166,6 +163,11 @@ namespace BackendGUI
             this.MyTitle = new System.Windows.Forms.Label();
             this.panel5 = new System.Windows.Forms.Panel();
             this.Logo = new System.Windows.Forms.PictureBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.kryptonDataGridView1 = new ComponentFactory.Krypton.Toolkit.KryptonDataGridView();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.kryptonNavigator1)).BeginInit();
@@ -207,7 +209,6 @@ namespace BackendGUI
             this.kryptonPage4.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
             this.panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.kryptonDataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.finishedGoodBindingSource)).BeginInit();
             this.panel3.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -225,6 +226,8 @@ namespace BackendGUI
             this.kryptonPanel9.SuspendLayout();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Logo)).BeginInit();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.kryptonDataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // PPAPalette
@@ -311,7 +314,7 @@ namespace BackendGUI
             this.kryptonPage4});
             this.kryptonNavigator1.Palette = this.PPAPalette;
             this.kryptonNavigator1.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Custom;
-            this.kryptonNavigator1.SelectedIndex = 0;
+            this.kryptonNavigator1.SelectedIndex = 3;
             this.kryptonNavigator1.Size = new System.Drawing.Size(876, 525);
             this.kryptonNavigator1.StateCommon.Bar.BarPaddingInside = new System.Windows.Forms.Padding(0);
             this.kryptonNavigator1.StateCommon.Bar.BarPaddingOnly = new System.Windows.Forms.Padding(0);
@@ -466,9 +469,9 @@ namespace BackendGUI
             this.lbMoveOut.ForeColor = System.Drawing.Color.White;
             this.lbMoveOut.Location = new System.Drawing.Point(569, 35);
             this.lbMoveOut.Name = "lbMoveOut";
-            this.lbMoveOut.Size = new System.Drawing.Size(164, 17);
+            this.lbMoveOut.Size = new System.Drawing.Size(12, 17);
             this.lbMoveOut.TabIndex = 33;
-            this.lbMoveOut.Text = "22/01/2022 08:10:30 AM";
+            this.lbMoveOut.Text = " ";
             // 
             // Tb_SerialNumber
             // 
@@ -489,7 +492,7 @@ namespace BackendGUI
             this.Tb_SerialNumber.StateCommon.Content.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.Tb_SerialNumber.StateCommon.Content.Padding = new System.Windows.Forms.Padding(1);
             this.Tb_SerialNumber.TabIndex = 21;
-            this.Tb_SerialNumber.Text = "21014B90U000118200A";
+            this.Tb_SerialNumber.Text = " ";
             // 
             // label11
             // 
@@ -523,9 +526,9 @@ namespace BackendGUI
             this.lbMoveIn.ForeColor = System.Drawing.Color.White;
             this.lbMoveIn.Location = new System.Drawing.Point(569, 9);
             this.lbMoveIn.Name = "lbMoveIn";
-            this.lbMoveIn.Size = new System.Drawing.Size(164, 17);
+            this.lbMoveIn.Size = new System.Drawing.Size(12, 17);
             this.lbMoveIn.TabIndex = 31;
-            this.lbMoveIn.Text = "22/01/2022 08:10:30 AM";
+            this.lbMoveIn.Text = " ";
             // 
             // label13
             // 
@@ -1894,7 +1897,7 @@ namespace BackendGUI
             this.kryptonPage4.LastVisibleSet = true;
             this.kryptonPage4.MinimumSize = new System.Drawing.Size(50, 50);
             this.kryptonPage4.Name = "kryptonPage4";
-            this.kryptonPage4.Size = new System.Drawing.Size(763, 490);
+            this.kryptonPage4.Size = new System.Drawing.Size(874, 490);
             this.kryptonPage4.Text = "Finish Good Record";
             this.kryptonPage4.ToolTipTitle = "Page ToolTip";
             this.kryptonPage4.UniqueName = "CAEAF24E4B7B4E1F58A60A81E6387A42";
@@ -1904,8 +1907,8 @@ namespace BackendGUI
             this.tableLayoutPanel8.ColumnCount = 1;
             this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel8.Controls.Add(this.panel2, 0, 0);
-            this.tableLayoutPanel8.Controls.Add(this.kryptonDataGridView1, 0, 1);
             this.tableLayoutPanel8.Controls.Add(this.panel3, 0, 2);
+            this.tableLayoutPanel8.Controls.Add(this.panel1, 0, 1);
             this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel8.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel8.Name = "tableLayoutPanel8";
@@ -1913,18 +1916,79 @@ namespace BackendGUI
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 62F));
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
-            this.tableLayoutPanel8.Size = new System.Drawing.Size(763, 490);
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(874, 490);
             this.tableLayoutPanel8.TabIndex = 115;
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.btnSynchronize);
             this.panel2.Controls.Add(this.lblLoading);
             this.panel2.Controls.Add(this.lblPo);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(3, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(757, 56);
+            this.panel2.Size = new System.Drawing.Size(868, 56);
             this.panel2.TabIndex = 0;
+            // 
+            // btnSynchronize
+            // 
+            this.btnSynchronize.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSynchronize.Location = new System.Drawing.Point(669, 7);
+            this.btnSynchronize.Name = "btnSynchronize";
+            this.btnSynchronize.OverrideDefault.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(147)))), ((int)(((byte)(60)))));
+            this.btnSynchronize.OverrideDefault.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(147)))), ((int)(((byte)(60)))));
+            this.btnSynchronize.OverrideDefault.Back.ColorAngle = 45F;
+            this.btnSynchronize.OverrideDefault.Border.ColorAngle = 45F;
+            this.btnSynchronize.OverrideDefault.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
+            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
+            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right)));
+            this.btnSynchronize.OverrideDefault.Border.GraphicsHint = ComponentFactory.Krypton.Toolkit.PaletteGraphicsHint.AntiAlias;
+            this.btnSynchronize.OverrideDefault.Border.Rounding = 20;
+            this.btnSynchronize.OverrideDefault.Border.Width = 1;
+            this.btnSynchronize.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.ProfessionalSystem;
+            this.btnSynchronize.Size = new System.Drawing.Size(181, 42);
+            this.btnSynchronize.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(147)))), ((int)(((byte)(60)))));
+            this.btnSynchronize.StateCommon.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(147)))), ((int)(((byte)(60)))));
+            this.btnSynchronize.StateCommon.Back.ColorAngle = 45F;
+            this.btnSynchronize.StateCommon.Border.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(147)))), ((int)(((byte)(60)))));
+            this.btnSynchronize.StateCommon.Border.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(147)))), ((int)(((byte)(60)))));
+            this.btnSynchronize.StateCommon.Border.ColorAngle = 45F;
+            this.btnSynchronize.StateCommon.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
+            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
+            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right)));
+            this.btnSynchronize.StateCommon.Border.GraphicsHint = ComponentFactory.Krypton.Toolkit.PaletteGraphicsHint.AntiAlias;
+            this.btnSynchronize.StateCommon.Border.Rounding = 20;
+            this.btnSynchronize.StateCommon.Border.Width = 1;
+            this.btnSynchronize.StateCommon.Content.ShortText.Color1 = System.Drawing.Color.White;
+            this.btnSynchronize.StateCommon.Content.ShortText.Color2 = System.Drawing.Color.White;
+            this.btnSynchronize.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSynchronize.StateDisabled.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.btnSynchronize.StateDisabled.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.btnSynchronize.StateDisabled.Border.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.btnSynchronize.StateDisabled.Border.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.btnSynchronize.StateDisabled.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
+            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
+            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right)));
+            this.btnSynchronize.StatePressed.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.btnSynchronize.StatePressed.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.btnSynchronize.StatePressed.Back.ColorAngle = 135F;
+            this.btnSynchronize.StatePressed.Border.ColorAngle = 135F;
+            this.btnSynchronize.StatePressed.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
+            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
+            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right)));
+            this.btnSynchronize.StatePressed.Border.Rounding = 20;
+            this.btnSynchronize.StatePressed.Border.Width = 1;
+            this.btnSynchronize.StateTracking.Back.ColorAngle = 45F;
+            this.btnSynchronize.StateTracking.Border.ColorAngle = 45F;
+            this.btnSynchronize.StateTracking.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
+            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
+            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right)));
+            this.btnSynchronize.StateTracking.Border.GraphicsHint = ComponentFactory.Krypton.Toolkit.PaletteGraphicsHint.AntiAlias;
+            this.btnSynchronize.StateTracking.Border.Rounding = 20;
+            this.btnSynchronize.StateTracking.Border.Width = 1;
+            this.btnSynchronize.TabIndex = 116;
+            this.btnSynchronize.Values.Text = "Synchronize";
+            this.btnSynchronize.Click += new System.EventHandler(this.btnSynchronize_Click);
             // 
             // lblLoading
             // 
@@ -1950,46 +2014,6 @@ namespace BackendGUI
             this.lblPo.TabIndex = 110;
             this.lblPo.Text = "Serial Number of PO:";
             // 
-            // kryptonDataGridView1
-            // 
-            this.kryptonDataGridView1.AllowUserToAddRows = false;
-            this.kryptonDataGridView1.AllowUserToDeleteRows = false;
-            this.kryptonDataGridView1.AutoGenerateColumns = false;
-            this.kryptonDataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
-            this.kryptonDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.kryptonDataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewTextBoxColumn1,
-            this.dataGridViewTextBoxColumn2,
-            this.dataGridViewTextBoxColumn3});
-            this.kryptonDataGridView1.DataSource = this.finishedGoodBindingSource;
-            this.kryptonDataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.kryptonDataGridView1.Location = new System.Drawing.Point(3, 65);
-            this.kryptonDataGridView1.Name = "kryptonDataGridView1";
-            this.kryptonDataGridView1.ReadOnly = true;
-            this.kryptonDataGridView1.Size = new System.Drawing.Size(757, 372);
-            this.kryptonDataGridView1.TabIndex = 0;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.DataPropertyName = "Id";
-            this.dataGridViewTextBoxColumn1.HeaderText = "Id";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            this.dataGridViewTextBoxColumn2.DataPropertyName = "SerialNumber";
-            this.dataGridViewTextBoxColumn2.HeaderText = "SerialNumber";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            this.dataGridViewTextBoxColumn2.ReadOnly = true;
-            // 
-            // dataGridViewTextBoxColumn3
-            // 
-            this.dataGridViewTextBoxColumn3.DataPropertyName = "ControlPoint";
-            this.dataGridViewTextBoxColumn3.HeaderText = "ControlPoint";
-            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            this.dataGridViewTextBoxColumn3.ReadOnly = true;
-            // 
             // finishedGoodBindingSource
             // 
             this.finishedGoodBindingSource.DataSource = typeof(MesData.FinishedGood);
@@ -2001,7 +2025,7 @@ namespace BackendGUI
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(3, 443);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(757, 44);
+            this.panel3.Size = new System.Drawing.Size(868, 44);
             this.panel3.TabIndex = 1;
             // 
             // label28
@@ -2076,6 +2100,7 @@ namespace BackendGUI
             // 
             this.Tb_Product.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
             this.Tb_Product.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.Tb_Product.Enabled = false;
             this.Tb_Product.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Tb_Product.ForeColor = System.Drawing.Color.Gray;
             this.Tb_Product.Location = new System.Drawing.Point(12, 242);
@@ -2088,6 +2113,7 @@ namespace BackendGUI
             // 
             this.Tb_PO.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
             this.Tb_PO.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.Tb_PO.Enabled = false;
             this.Tb_PO.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Tb_PO.ForeColor = System.Drawing.Color.Gray;
             this.Tb_PO.Location = new System.Drawing.Point(13, 202);
@@ -2100,6 +2126,7 @@ namespace BackendGUI
             // 
             this.Tb_ProductDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(252)))), ((int)(((byte)(252)))));
             this.Tb_ProductDesc.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.Tb_ProductDesc.Enabled = false;
             this.Tb_ProductDesc.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Tb_ProductDesc.ForeColor = System.Drawing.Color.Gray;
             this.Tb_ProductDesc.Location = new System.Drawing.Point(11, 281);
@@ -2235,7 +2262,7 @@ namespace BackendGUI
             this.Tb_TimeAtStatus.StateCommon.Content.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.Tb_TimeAtStatus.StateCommon.Content.Padding = new System.Windows.Forms.Padding(1);
             this.Tb_TimeAtStatus.TabIndex = 111;
-            this.Tb_TimeAtStatus.Text = "0.001232";
+            this.Tb_TimeAtStatus.Text = " ";
             this.Tb_TimeAtStatus.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label19
@@ -2281,7 +2308,7 @@ namespace BackendGUI
             this.Tb_StatusCode.StateCommon.Content.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.Tb_StatusCode.StateCommon.Content.Padding = new System.Windows.Forms.Padding(1);
             this.Tb_StatusCode.TabIndex = 109;
-            this.Tb_StatusCode.Text = "Setting";
+            this.Tb_StatusCode.Text = " ";
             this.Tb_StatusCode.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // kryptonPanel1
@@ -2380,6 +2407,50 @@ namespace BackendGUI
             this.Logo.TabIndex = 54;
             this.Logo.TabStop = false;
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.kryptonDataGridView1);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 65);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(868, 372);
+            this.panel1.TabIndex = 2;
+            // 
+            // kryptonDataGridView1
+            // 
+            this.kryptonDataGridView1.AllowUserToAddRows = false;
+            this.kryptonDataGridView1.AllowUserToDeleteRows = false;
+            this.kryptonDataGridView1.AutoGenerateColumns = false;
+            this.kryptonDataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn1,
+            this.dataGridViewTextBoxColumn2,
+            this.dataGridViewTextBoxColumn3});
+            this.kryptonDataGridView1.DataSource = this.finishedGoodBindingSource;
+            this.kryptonDataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.kryptonDataGridView1.Location = new System.Drawing.Point(0, 0);
+            this.kryptonDataGridView1.Name = "kryptonDataGridView1";
+            this.kryptonDataGridView1.Size = new System.Drawing.Size(868, 372);
+            this.kryptonDataGridView1.TabIndex = 4;
+            this.kryptonDataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.kryptonDataGridView1_ColumnHeaderMouseClick);
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.DataPropertyName = "Id";
+            this.dataGridViewTextBoxColumn1.HeaderText = "Id";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.DataPropertyName = "SerialNumber";
+            this.dataGridViewTextBoxColumn2.HeaderText = "SerialNumber";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            this.dataGridViewTextBoxColumn3.DataPropertyName = "ControlPoint";
+            this.dataGridViewTextBoxColumn3.HeaderText = "ControlPoint";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2443,7 +2514,6 @@ namespace BackendGUI
             this.tableLayoutPanel8.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.kryptonDataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.finishedGoodBindingSource)).EndInit();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
@@ -2466,6 +2536,8 @@ namespace BackendGUI
             this.kryptonPanel9.PerformLayout();
             this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.Logo)).EndInit();
+            this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.kryptonDataGridView1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2598,7 +2670,6 @@ namespace BackendGUI
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label lblLoading;
         private System.Windows.Forms.Label lblPo;
-        private ComponentFactory.Krypton.Toolkit.KryptonDataGridView kryptonDataGridView1;
         private System.Windows.Forms.DataGridViewTextBoxColumn idDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn serialNumberDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn controlPointDataGridViewTextBoxColumn;
@@ -2606,10 +2677,13 @@ namespace BackendGUI
         private System.Windows.Forms.Label label28;
         private ComponentFactory.Krypton.Toolkit.KryptonTextBox Tb_FinishedGoodCounter;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+        private System.Windows.Forms.Label lblLoadingPo;
+        private ComponentFactory.Krypton.Toolkit.KryptonButton btnSynchronize;
+        private System.Windows.Forms.Panel panel1;
+        private ComponentFactory.Krypton.Toolkit.KryptonDataGridView kryptonDataGridView1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
-        private System.Windows.Forms.Label lblLoadingPo;
     }
 }
 
