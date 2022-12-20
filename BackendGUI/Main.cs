@@ -16,6 +16,7 @@ using MesData.Backend;
 using MesData.UnitCounter;
 using Environment = System.Environment;
 using System.Linq.Dynamic;
+using System.Windows.Forms.VisualStyles;
 
 namespace BackendGUI
 {
@@ -38,6 +39,17 @@ namespace BackendGUI
 
             lbTitle.Text = AppSettings.Resource;
 
+            _syncWorker = new BackgroundWorker();
+            _syncWorker.WorkerReportsProgress = true;
+            _syncWorker.RunWorkerCompleted += SyncWorkerCompleted;
+            _syncWorker.ProgressChanged += SyncWorkerProgress;
+            _syncWorker.DoWork += SyncDoWork;
+
+            _moveWorker = new AbortableBackgroundWorker();
+            _moveWorker.WorkerReportsProgress = true;
+            _moveWorker.RunWorkerCompleted += MoveWorkerCompleted;
+            _moveWorker.ProgressChanged += MoveWorkerProgress;
+            _moveWorker.DoWork += MoveWorkerDoWork;
 
             _componentSetting = BackendComponentSetting.Load(BackendComponentSetting.FileName);
             _componentSetting?.Save();
@@ -82,6 +94,150 @@ namespace BackendGUI
 
                 }
             }
+          
+        }
+
+        private void MoveWorkerDoWork(object sender, DoWorkEventArgs e)
+        {
+            var oContainerStatus =
+                         Mes.GetContainerStatusDetails(_mesData, Tb_SerialNumber.Text,
+                           _mesData.DataCollectionName);
+            if (oContainerStatus != null)
+            {
+               _moveWorker.ReportProgress(1, @"Container Move In Attempt 1");
+                var transaction =
+                      Mes.ExecuteMoveIn(_mesData, oContainerStatus.ContainerName.Value, _dMoveIn);
+                var resultMoveIn = transaction.Result || transaction.Message ==
+                    "Move-in has already been performed for this operation.";
+                if (!resultMoveIn && transaction.Message.Contains("TimeOut"))
+                {
+                    _moveWorker.ReportProgress(1, @"Container Move In Attempt 2");
+                    transaction = Mes.ExecuteMoveIn(_mesData, oContainerStatus.ContainerName.Value,
+                        _dMoveIn);
+                    resultMoveIn = transaction.Result || transaction.Message ==
+                        "Move-in has already been performed for this operation.";
+                    if (!resultMoveIn && transaction.Message.Contains("TimeOut"))
+                    {
+                        _moveWorker.ReportProgress(1, @"Container Move In Attempt 3");
+                        transaction = Mes.ExecuteMoveIn(_mesData, oContainerStatus.ContainerName.Value,
+                            _dMoveIn);
+                        resultMoveIn = transaction.Result || transaction.Message ==
+                            "Move-in has already been performed for this operation.";
+                    }
+                }
+
+                if (resultMoveIn)
+                {
+                    //Consume Component
+                    _moveWorker.ReportProgress(2, @"Container Component Issue");
+                    var listIssue = new List<dynamic>();
+                    if (_backendComponent.MasterCarton.Enabled)
+                        listIssue.Add(_backendComponent.MasterCarton.ToIssueActualDetail("Repair"));
+                    if (_backendComponent.MasterCartonLabel.Enabled)
+                        listIssue.Add(_backendComponent.MasterCartonLabel.ToIssueActualDetail("Repair"));
+                    if (_backendComponent.ColorBox.Enabled)
+                        listIssue.Add(_backendComponent.ColorBox.ToIssueActualDetail("Repair"));
+                    if (_backendComponent.ColorBoxLabel.Enabled)
+                        listIssue.Add(_backendComponent.ColorBoxLabel.ToIssueActualDetail("Repair"));
+
+                    if (listIssue.Count > 0)
+                    {
+                        var transIssue = Mes.ExecuteComponentIssue(_mesData,
+                            oContainerStatus.ContainerName.Value,
+                            listIssue);
+                        if (!transIssue.Result)
+                        {
+                            e.Result = (BackEndState.ComponentIssueFailed);
+                            return;
+                        }
+                    }
+
+                    _dMoveOut = DateTime.Now;
+                    _moveWorker.ReportProgress(3, @"Container Move Standard Attempt 1");
+                    var resultMoveStd = Mes.ExecuteMoveStandard(_mesData,
+                        oContainerStatus.ContainerName.Value, _dMoveOut);
+                    if (!resultMoveStd.Result)
+                    {
+                        _moveWorker.ReportProgress(3, @"Get Container Position 1");
+                        var posAfterMoveStd = Mes.GetCurrentContainerStep(_mesData, oContainerStatus.ContainerName.Value);
+                        resultMoveStd.Result |= !posAfterMoveStd.Contains("Backend");
+                        if (!resultMoveStd.Result)
+                        {
+                            _dMoveOut = DateTime.Now;
+                            _moveWorker.ReportProgress(3, @"Container Move Standard Attempt 2");
+                            resultMoveStd = Mes.ExecuteMoveStandard(_mesData,
+                                oContainerStatus.ContainerName.Value, _dMoveOut);
+
+                            if (!resultMoveStd.Result)
+                            {
+                                _moveWorker.ReportProgress(3, @"Get Container Position 2");
+                                posAfterMoveStd = Mes.GetCurrentContainerStep(_mesData, oContainerStatus.ContainerName.Value);
+                                resultMoveStd.Result |= !posAfterMoveStd.Contains("Backend");
+                                if (!resultMoveStd.Result)
+                                {
+                                    _dMoveOut = DateTime.Now;
+                                    _moveWorker.ReportProgress(3, @"Container Move Standard Attempt 3");
+                                    resultMoveStd = Mes.ExecuteMoveStandard(_mesData,
+                                        oContainerStatus.ContainerName.Value, _dMoveOut);
+                                    if (!resultMoveStd.Result)
+                                    {
+                                        _moveWorker.ReportProgress(3, @"Get Container Position 3");
+                                        posAfterMoveStd = Mes.GetCurrentContainerStep(_mesData, oContainerStatus.ContainerName.Value);
+                                        resultMoveStd.Result |= !posAfterMoveStd.Contains("Backend");
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    ThreadHelper.ControlSetText( lbMoveOut, _dMoveOut.ToString(Mes.DateTimeStringFormat));
+
+                    //Update Counter
+                    if (resultMoveStd.Result)
+                    {
+                        var currentPos =
+                              Mes.GetCurrentContainerStep(_mesData, oContainerStatus.ContainerName.Value);
+                        Mes.UpdateOrCreateFinishGoodRecordToCached(_mesData,
+                          oContainerStatus.MfgOrderName?.Value, oContainerStatus.ContainerName.Value,
+                          currentPos);
+                        _mesUnitCounter.UpdateCounter(oContainerStatus.ContainerName.Value);
+                        MesUnitCounter.Save(_mesUnitCounter);
+                        ThreadHelper.ControlSetText(Tb_BackEndQty, _mesUnitCounter.Counter.ToString());
+                    }
+
+                    e.Result=(resultMoveStd.Result
+                      ? BackEndState.ScanUnitSerialNumber
+                      : BackEndState.MoveInOkMoveFail);
+                    return;
+                }
+
+                // check if fail by maintenance Past Due
+                var transPastDue = Mes.GetMaintenancePastDue(_mesData.MaintenanceStatusDetails);
+                if (transPastDue.Result)
+                {
+                    KryptonMessageBox.Show(this, "This resource under maintenance, need to complete!",
+                        "Move In",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                e.Result=(BackEndState.MoveInFail);
+                return;
+            }
+
+            e.Result = BackEndState.UnitNotFound;
+        }
+
+        private void MoveWorkerProgress(object sender, ProgressChangedEventArgs e)
+        {
+            var cmd = (string) e.UserState;
+            lblCommand.Text = cmd;
+        }
+
+        private void MoveWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Result == null) return;
+            var state = (BackEndState) e.Result;
+            SetBackendState(state);
         }
 
         public sealed override string Text
@@ -104,7 +260,7 @@ namespace BackendGUI
 
         #region FUNCTION USEFULL
 
-        private async Task SetBackendState(BackEndState backEndState)
+        private void SetBackendState(BackEndState backEndState)
         {
             _backEndState = backEndState;
             switch (_backEndState)
@@ -122,7 +278,7 @@ namespace BackendGUI
                     lblCommand.Text = @"Scan Unit Serial Number!";
                     if (_mesData.ResourceStatusDetails == null || _mesData.ResourceStatusDetails?.Availability != "Up")
                     {
-                        await SetBackendState(BackEndState.PlaceUnit);
+                        SetBackendState(BackEndState.PlaceUnit);
                         break;
                     }
 
@@ -140,7 +296,7 @@ namespace BackendGUI
                     lblCommand.Text = @"Checking Unit Status";
                     if (_mesData.ResourceStatusDetails == null || _mesData.ResourceStatusDetails?.Availability != "Up")
                     {
-                        await SetBackendState(BackEndState.PlaceUnit);
+                          SetBackendState(BackEndState.PlaceUnit);
                         break;
                     }
 
@@ -154,20 +310,20 @@ namespace BackendGUI
                     }
 
                     _readScanner = false;
-                    var oContainerStatus = await Mes.GetContainerStatusDetails(_mesData, Tb_SerialNumber.Text,
+                    var oContainerStatus =   Mes.GetContainerStatusDetails(_mesData, Tb_SerialNumber.Text,
                         _mesData.DataCollectionName);
                     if (oContainerStatus != null)
                     {
                         if (oContainerStatus.Qty == 0)
                         {
                             _wrongContainerPosition = "Scrap";
-                            await SetBackendState(BackEndState.WrongPosition);
+                              SetBackendState(BackEndState.WrongPosition);
                             break;
                         }
                         if (oContainerStatus.Operation?.Name != _mesData.OperationName)
                         {
                             _wrongContainerPosition = oContainerStatus.Operation?.Name;
-                            await SetBackendState(BackEndState.WrongPosition);
+                              SetBackendState(BackEndState.WrongPosition);
                             break;
                         }
                        
@@ -176,20 +332,21 @@ namespace BackendGUI
                         {
                             lblLoadingPo.Visible = true;
                             ClearPo();
-                            var mfg = await Mes.GetMfgOrder(_mesData, oContainerStatus.MfgOrderName?.ToString());
+                            var mfg =   Mes.GetMfgOrder(_mesData, oContainerStatus.MfgOrderName?.ToString());
                             if (mfg == null)
                             {
                                 lblLoadingPo.Visible = false;
                                 KryptonMessageBox.Show(this, "Failed To Get Manufacturing Order Information",
                                     "Check Unit",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                await SetBackendState(BackEndState.ScanUnitSerialNumber);
+                                  SetBackendState(BackEndState.ScanUnitSerialNumber);
                                 break;
                             }
 
 
                             _mesData.SetManufacturingOrder(mfg);
-                            _backendComponent = new BackendComponent
+                            if (mfg.MaterialList!=null)
+                            {_backendComponent = new BackendComponent
                             {
                                 MasterCarton =
                                 {
@@ -217,7 +374,11 @@ namespace BackendGUI
                                         x.Product.Name.IndexOf("809", StringComparison.Ordinal) == 0 &&
                                         x.wikScanning?.Value == "X" && x.wikScanning != null).ToList().Count > 1
                                 },
-                            };
+                            };}
+                            else
+                            {
+                                _backendComponent = new BackendComponent();
+                            }
 
                             _backendComponent.MasterCarton.Enabled &=
                                 _componentSetting.MasterCartonEnable == EnableDisable.Enable;
@@ -243,13 +404,13 @@ namespace BackendGUI
                             Tb_Product.Text = oContainerStatus.Product.Name;
                             Tb_ProductDesc.Text = oContainerStatus.ProductDescription?.Value;
 
-                            var img = await Mes.GetImage(_mesData, oContainerStatus.Product.Name);
+                            var img =   Mes.GetImage(_mesData, oContainerStatus.Product.Name);
                             pictureBox1.ImageLocation = img.Identifier.Value;
 
                             if (_mesUnitCounter != null)
                             {
-                                await _mesUnitCounter.StopPoll();
-                                await _mesUnitCounter.Synchronize();
+                                  _mesUnitCounter.StopPoll();
+                                  _mesUnitCounter.Synchronize();
                             }
 
                             _mesUnitCounter = MesUnitCounter.Load(MesUnitCounter.GetFileName(mfg.Name.Value));
@@ -271,24 +432,24 @@ namespace BackendGUI
                         _backendComponent.ResetValue();
                         if (_backendComponent.Completed)
                         {
-                            await SetBackendState(BackEndState.UpdateMoveInMove);
+                              SetBackendState(BackEndState.UpdateMoveInMove);
                             break;
                         }
 
-                        await SetBackendState(BackEndState.ScanAny);
+                        SetBackendState(BackEndState.ScanAny);
                         break;
                     }
 
                     var containerStep =
-                        await Mes.GetCurrentContainerStep(_mesData, Tb_SerialNumber.Text); // try get operation pos
+                          Mes.GetCurrentContainerStep(_mesData, Tb_SerialNumber.Text); // try get operation pos
                     if (containerStep != null && !_mesData.OperationName.Contains(containerStep))
                     {
                         _wrongContainerPosition = containerStep;
-                        await SetBackendState(BackEndState.WrongPosition);
+                          SetBackendState(BackEndState.WrongPosition);
                         break;
                     }
 
-                    await SetBackendState(BackEndState.UnitNotFound);
+                      SetBackendState(BackEndState.UnitNotFound);
                     break;
                 case BackEndState.UnitNotFound:
                     _readScanner = false;
@@ -304,113 +465,11 @@ namespace BackendGUI
                     _readScanner = false;
                     lblCommand.ForeColor = Color.LimeGreen;
                     lblCommand.Text = @"Container Move In";
-                    oContainerStatus =
-                        await Mes.GetContainerStatusDetails(_mesData, Tb_SerialNumber.Text,
-                            _mesData.DataCollectionName);
-                    if (oContainerStatus != null)
+                    if (_moveWorker.IsBusy)
                     {
-                        lblCommand.Text = @"Container Move In Attempt 1";
-                        var transaction =
-                            await Mes.ExecuteMoveIn(_mesData, oContainerStatus.ContainerName.Value, _dMoveIn);
-                        var resultMoveIn = transaction.Result || transaction.Message ==
-                            "Move-in has already been performed for this operation.";
-                        if (!resultMoveIn && transaction.Message.Contains("TimeOut"))
-                        {
-                            lblCommand.Text = @"Container Move In Attempt 2";
-                            transaction = await Mes.ExecuteMoveIn(_mesData, oContainerStatus.ContainerName.Value,
-                                _dMoveIn);
-                            resultMoveIn = transaction.Result || transaction.Message ==
-                                "Move-in has already been performed for this operation.";
-                            if (!resultMoveIn && transaction.Message.Contains("TimeOut"))
-                            {
-                                lblCommand.Text = @"Container Move In Attempt 3";
-                                transaction = await Mes.ExecuteMoveIn(_mesData, oContainerStatus.ContainerName.Value,
-                                    _dMoveIn);
-                                resultMoveIn = transaction.Result || transaction.Message ==
-                                    "Move-in has already been performed for this operation.";
-                            }
-                        }
-
-                        if (resultMoveIn)
-                        {
-                            //Consume Component
-                            lblCommand.Text = @"Container Component Issue";
-                            var listIssue = new List<dynamic>();
-                            if (_backendComponent.MasterCarton.Enabled)
-                                listIssue.Add(_backendComponent.MasterCarton.ToIssueActualDetail("Repair"));
-                            if (_backendComponent.MasterCartonLabel.Enabled)
-                                listIssue.Add(_backendComponent.MasterCartonLabel.ToIssueActualDetail("Repair"));
-                            if (_backendComponent.ColorBox.Enabled)
-                                listIssue.Add(_backendComponent.ColorBox.ToIssueActualDetail("Repair"));
-                            if (_backendComponent.ColorBoxLabel.Enabled)
-                                listIssue.Add(_backendComponent.ColorBoxLabel.ToIssueActualDetail("Repair"));
-
-                            if (listIssue.Count > 0)
-                            {
-                                var transIssue = await Mes.ExecuteComponentIssue(_mesData,
-                                    oContainerStatus.ContainerName.Value,
-                                    listIssue);
-                                if (!transIssue.Result)
-                                {
-                                    await SetBackendState(BackEndState.ComponentIssueFailed);
-                                    break;
-                                }
-                            }
-
-                            lblCommand.Text = @"Container Move Standard";
-                            _dMoveOut = DateTime.Now;
-                            lblCommand.Text = @"Container Move Standard Attempt 1";
-                            var resultMoveStd = await Mes.ExecuteMoveStandard(_mesData,
-                                oContainerStatus.ContainerName.Value, _dMoveOut, 30000);
-                            if (!resultMoveStd.Result && resultMoveStd.Message.Contains("TimeOut"))
-                            {
-                                _dMoveOut = DateTime.Now;
-                                lblCommand.Text = @"Container Move Standard Attempt 2";
-                                resultMoveStd = await Mes.ExecuteMoveStandard(_mesData,
-                                    oContainerStatus.ContainerName.Value, _dMoveOut, 30000);
-                                if (!resultMoveStd.Result && resultMoveStd.Message.Contains("TimeOut"))
-                                {
-                                    _dMoveOut = DateTime.Now;
-                                    lblCommand.Text = @"Container Move Standard Attempt 3";
-                                    resultMoveStd = await Mes.ExecuteMoveStandard(_mesData,
-                                        oContainerStatus.ContainerName.Value, _dMoveOut, 30000);
-                                }
-                            }
-
-                            lbMoveOut.Text = _dMoveOut.ToString(Mes.DateTimeStringFormat);
-
-
-
-                            //Update Counter
-                            if (resultMoveStd.Result)
-                            {
-                                var currentPos =
-                                    await Mes.GetCurrentContainerStep(_mesData, oContainerStatus.ContainerName.Value);
-                                await Mes.UpdateOrCreateFinishGoodRecordToCached(_mesData,
-                                    oContainerStatus.MfgOrderName?.Value, oContainerStatus.ContainerName.Value,
-                                    currentPos);
-                                _mesUnitCounter.UpdateCounter(oContainerStatus.ContainerName.Value);
-                                MesUnitCounter.Save(_mesUnitCounter);
-                                Tb_BackEndQty.Text = _mesUnitCounter.Counter.ToString();
-                            }
-
-                            await SetBackendState(resultMoveStd.Result
-                                ? BackEndState.ScanUnitSerialNumber
-                                : BackEndState.MoveInOkMoveFail);
-                            break;
-                        }
-
-                        // check if fail by maintenance Past Due
-                        transPastDue = Mes.GetMaintenancePastDue(_mesData.MaintenanceStatusDetails);
-                        if (transPastDue.Result)
-                        {
-                            KryptonMessageBox.Show(this, "This resource under maintenance, need to complete!",
-                                "Move In",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-
-                        await SetBackendState(BackEndState.MoveInFail);
+                        _moveWorker.Abort();
                     }
+                    _moveWorker.RunWorkerAsync(Tb_SerialNumber.Text);
 
                     break;
                 case BackEndState.MoveSuccess:
@@ -472,11 +531,11 @@ namespace BackendGUI
 
         #region FUNCTION STATUS OF RESOURCE
 
-        private async Task GetStatusMaintenanceDetails()
+        private   void GetStatusMaintenanceDetails()
         {
             try
             {
-                var maintenanceStatusDetails = await Mes.GetMaintenanceStatusDetails(_mesData);
+                var maintenanceStatusDetails =   Mes.GetMaintenanceStatusDetails(_mesData);
                 _mesData.SetMaintenanceStatusDetails(maintenanceStatusDetails);
                 if (maintenanceStatusDetails != null)
                 {
@@ -495,7 +554,7 @@ namespace BackendGUI
                         lblResMaintMesg.Visible = true;
                         if (_mesData?.ResourceStatusDetails?.Reason?.Name != "Planned Maintenance")
                         {
-                            await Mes.SetResourceStatus(_mesData, "BE - Planned Downtime", "Planned Maintenance");
+                              Mes.SetResourceStatus(_mesData, "BE - Planned Downtime", "Planned Maintenance");
                         }
 
                         return;
@@ -531,11 +590,11 @@ namespace BackendGUI
             }
         }
 
-        private async Task GetStatusOfResource()
+        private void GetStatusOfResource()
         {
             try
             {
-                var resourceStatus = await Mes.GetResourceStatusDetails(_mesData);
+                var resourceStatus =   Mes.GetResourceStatusDetails(_mesData);
                 if (resourceStatus != null)
                 {
                     _mesData.SetResourceStatusDetails(resourceStatus);
@@ -570,16 +629,16 @@ namespace BackendGUI
             }
         }
 
-        private async Task GetStatusOfResourceDetail()
+        private   void GetStatusOfResourceDetail()
         {
             try
             {
-                var resourceStatus = await Mes.GetResourceStatusDetails(_mesData);
+                var resourceStatus =   Mes.GetResourceStatusDetails(_mesData);
                 if (resourceStatus != null)
                 {
                     _mesData.SetResourceStatusDetails(resourceStatus);
                     if (resourceStatus.Status != null) Cb_StatusCode.Text = resourceStatus.Status.Name;
-                    await Task.Delay(1000);
+                      Task.Delay(1000);
                     if (resourceStatus.Reason != null) Cb_StatusReason.Text = resourceStatus.Reason.Name;
                     if (resourceStatus.Availability != null)
                     {
@@ -611,11 +670,11 @@ namespace BackendGUI
             }
         }
 
-        private async Task GetResourceStatusCodeList()
+        private   void GetResourceStatusCodeList()
         {
             try
             {
-                var oStatusCodeList = await Mes.GetListResourceStatusCode(_mesData);
+                var oStatusCodeList =   Mes.GetListResourceStatusCode(_mesData);
                 if (oStatusCodeList != null)
                 {
                     Cb_StatusCode.DataSource = oStatusCodeList
@@ -635,16 +694,16 @@ namespace BackendGUI
 
         #region COMPONENT EVENT
 
-        private async void TimerRealtime_Tick(object sender, EventArgs e)
+        private   void TimerRealtime_Tick(object sender, EventArgs e)
         {
-            await GetStatusOfResource();
-            await GetStatusMaintenanceDetails();
+              GetStatusOfResource();
+              GetStatusMaintenanceDetails();
         }
 
-        private async void btnResetState_Click(object sender, EventArgs e)
+        private   void btnResetState_Click(object sender, EventArgs e)
         {
             if (_backEndState == BackEndState.WaitPreparation) return;
-            await SetBackendState(BackEndState.ScanUnitSerialNumber);
+              SetBackendState(BackEndState.ScanUnitSerialNumber);
             Tb_Scanner.Focus();
         }
 
@@ -658,8 +717,10 @@ namespace BackendGUI
         private bool _allowClose;
         private bool _sortAscending;
         private BindingList<FinishedGood> _bindingList;
+        private BackgroundWorker _syncWorker;
+        private readonly AbortableBackgroundWorker _moveWorker;
 
-        private async void Tb_Scanner_KeyUp(object sender, KeyEventArgs e)
+        private   void Tb_Scanner_KeyUp(object sender, KeyEventArgs e)
         {
             if (!_readScanner) Tb_Scanner.Clear();
             if (_ignoreScanner) e.Handled = true;
@@ -679,14 +740,14 @@ namespace BackendGUI
                                 break;
                             }
 
-                            await SetBackendState(BackEndState.CheckUnitStatus);
+                            SetBackendState(BackEndState.CheckUnitStatus);
                             break;
                         case BackEndState.ComponentNotFound:
                         case BackEndState.WrongComponent:
                         case BackEndState.ScanAny:
                             if (_backendComponent.Completed)
                             {
-                                await SetBackendState(BackEndState.UpdateMoveInMove);
+                                  SetBackendState(BackEndState.UpdateMoveInMove);
                                 break;
                             }
 
@@ -694,7 +755,7 @@ namespace BackendGUI
                             //validate
                             if (scanned.Length >= 10)
                             {
-                                var valid = _mesData.ManufacturingOrder?.MaterialList.Where(x =>
+                                var valid = _mesData.ManufacturingOrder?.MaterialList?.Where(x =>
                                         x.Product.Name.IndexOf(scanned.Substring(0, 10), StringComparison.Ordinal) == 0)
                                     .ToList();
                                 if (valid != null && valid.Count > 0)
@@ -708,13 +769,13 @@ namespace BackendGUI
                                         {
                                             if (valid[0].wikScanning != "X" || valid[0].wikScanning == null)
                                             {
-                                                await SetBackendState(BackEndState.WrongComponent);
+                                                  SetBackendState(BackEndState.WrongComponent);
                                                 break;
                                             }
                                         }
                                         else
                                         {
-                                            await SetBackendState(BackEndState.WrongComponent);
+                                              SetBackendState(BackEndState.WrongComponent);
                                             break;
                                         }
 
@@ -731,13 +792,13 @@ namespace BackendGUI
 
                                             if (valid[0].wikScanning != "X" || valid[0].wikScanning == null)
                                             {
-                                                await SetBackendState(BackEndState.WrongComponent);
+                                                  SetBackendState(BackEndState.WrongComponent);
                                                 break;
                                             }
                                         }
                                         else
                                         {
-                                            await SetBackendState(BackEndState.WrongComponent);
+                                              SetBackendState(BackEndState.WrongComponent);
                                             break;
                                         }
 
@@ -754,13 +815,13 @@ namespace BackendGUI
 
                                             if (valid[0].wikScanning != "X" || valid[0].wikScanning == null)
                                             {
-                                                await SetBackendState(BackEndState.WrongComponent);
+                                                  SetBackendState(BackEndState.WrongComponent);
                                                 break;
                                             }
                                         }
                                         else
                                         {
-                                            await SetBackendState(BackEndState.WrongComponent);
+                                              SetBackendState(BackEndState.WrongComponent);
                                             break;
                                         }
 
@@ -781,13 +842,13 @@ namespace BackendGUI
 
                                                 if (valid[0].wikScanning != "X" || valid[0].wikScanning == null)
                                                 {
-                                                    await SetBackendState(BackEndState.WrongComponent);
+                                                      SetBackendState(BackEndState.WrongComponent);
                                                     break;
                                                 }
                                             }
                                             else
                                             {
-                                                await SetBackendState(BackEndState.WrongComponent);
+                                                  SetBackendState(BackEndState.WrongComponent);
                                                 break;
                                             }
 
@@ -801,20 +862,20 @@ namespace BackendGUI
                                     if (distinct != "809" && distinct != "802" &&
                                         !(distinct == "801" || distinct == "820"))
                                     {
-                                        await SetBackendState(BackEndState.WrongComponent);
+                                          SetBackendState(BackEndState.WrongComponent);
                                         break;
                                     }
                                 }
                                 else
                                 {
-                                    await SetBackendState(BackEndState.ComponentNotFound);
+                                      SetBackendState(BackEndState.ComponentNotFound);
                                     break;
                                 }
                             }
 
                             if (_backendComponent.Completed)
                             {
-                                await SetBackendState(BackEndState.UpdateMoveInMove);
+                                  SetBackendState(BackEndState.UpdateMoveInMove);
                             }
 
                             break;
@@ -828,12 +889,12 @@ namespace BackendGUI
 
         #endregion
 
-        private async void Main_Load(object sender, EventArgs e)
+        private   void Main_Load(object sender, EventArgs e)
         {
-            await GetStatusOfResource();
-            await GetStatusMaintenanceDetails();
-            await GetResourceStatusCodeList();
-            await SetBackendState(BackEndState.WaitPreparation);
+              GetStatusOfResource();
+              GetStatusMaintenanceDetails();
+              GetResourceStatusCodeList();
+              SetBackendState(BackEndState.WaitPreparation);
         }
 
         private void ClearPo()
@@ -862,11 +923,11 @@ namespace BackendGUI
 
         }
 
-        private async void Cb_StatusCode_SelectedIndexChanged(object sender, EventArgs e)
+        private   void Cb_StatusCode_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
             {
-                var oStatusCode = await Mes.GetResourceStatusCode(_mesData,
+                var oStatusCode =   Mes.GetResourceStatusCode(_mesData,
                     Cb_StatusCode.SelectedValue != null ? Cb_StatusCode.SelectedValue.ToString() : "");
                 if (oStatusCode != null)
                 {
@@ -874,7 +935,7 @@ namespace BackendGUI
                     if (oStatusCode.ResourceStatusReasons != null)
                     {
                         var oStatusReason =
-                            await Mes.GetResourceStatusReasonGroup(_mesData, oStatusCode.ResourceStatusReasons.Name);
+                              Mes.GetResourceStatusReasonGroup(_mesData, oStatusCode.ResourceStatusReasons.Name);
                         Cb_StatusReason.DataSource = oStatusReason.Entries;
                     }
                     else
@@ -892,22 +953,22 @@ namespace BackendGUI
             }
         }
 
-        private async void btnSetMachineStatus_Click(object sender, EventArgs e)
+        private   void btnSetMachineStatus_Click(object sender, EventArgs e)
         {
             try
             {
                 var result = false;
                 if (Cb_StatusCode.Text != "" && Cb_StatusReason.Text != "")
                 {
-                    result = await Mes.SetResourceStatus(_mesData, Cb_StatusCode.Text, Cb_StatusReason.Text);
+                    result =   Mes.SetResourceStatus(_mesData, Cb_StatusCode.Text, Cb_StatusReason.Text);
                 }
                 else if (Cb_StatusCode.Text != "")
                 {
-                    result = await Mes.SetResourceStatus(_mesData, Cb_StatusCode.Text, "");
+                    result =   Mes.SetResourceStatus(_mesData, Cb_StatusCode.Text, "");
                 }
 
-                await GetStatusOfResourceDetail();
-                await GetStatusOfResource();
+                  GetStatusOfResourceDetail();
+                  GetStatusOfResource();
                 KryptonMessageBox.Show(result ? "Setup status successful" : "Setup status failed");
 
             }
@@ -920,7 +981,7 @@ namespace BackendGUI
             }
         }
 
-        private async void kryptonNavigator1_SelectedPageChanged(object sender, EventArgs e)
+        private async  void kryptonNavigator1_SelectedPageChanged(object sender, EventArgs e)
         {
             if (kryptonNavigator1.SelectedIndex == 0)
             {
@@ -929,7 +990,7 @@ namespace BackendGUI
 
             if (kryptonNavigator1.SelectedIndex == 1)
             {
-                await GetStatusOfResourceDetail();
+                  GetStatusOfResourceDetail();
             }
 
             if (kryptonNavigator1.SelectedIndex == 2)
@@ -942,20 +1003,20 @@ namespace BackendGUI
             {
                 lblPo.Text = $@"Serial Number of PO: {_mesData.ManufacturingOrder?.Name}";
                 lblLoading.Visible = true;
-                await GetFinishedGoodRecord();
-                lblLoading.Visible = false;
+                 await GetFinishedGoodRecord();
+               if(!_syncWorker.IsBusy) lblLoading.Visible = false;
             }
 
         }
 
-        private async Task GetFinishedGoodRecord()
+        private   async Task GetFinishedGoodRecord()
         {
             if (_mesData == null) return;
 
-            var data = await Mes.GetFinishGoodRecordFromCached(_mesData, _mesData.ManufacturingOrder?.Name.ToString());
+            var data = await  Mes.GetFinishGoodRecordFromCached(_mesData, _mesData.ManufacturingOrder?.Name.ToString());
             if (data != null)
             {
-                var list = await Mes.FinishGoodToFinishedGood(data);
+                var list =   Mes.FinishGoodToFinishedGood(data);
                 _bindingList = new BindingList<FinishedGood>(list);
                 finishedGoodBindingSource.DataSource = _bindingList;
                 kryptonDataGridView1.DataSource = finishedGoodBindingSource;
@@ -989,7 +1050,7 @@ namespace BackendGUI
             }
         }
 
-        private async void btnCallMaintenance_Click(object sender, EventArgs e)
+        private   void btnCallMaintenance_Click(object sender, EventArgs e)
         {
             try
             {
@@ -1000,8 +1061,8 @@ namespace BackendGUI
                     return;
                 }
 
-                var result = await Mes.SetResourceStatus(_mesData, "BE - Internal Downtime", "Maintenance");
-                await GetStatusOfResource();
+                var result =   Mes.SetResourceStatus(_mesData, "BE - Internal Downtime", "Maintenance");
+                  GetStatusOfResource();
                 KryptonMessageBox.Show(result ? "Setup status successful" : "Setup status failed");
             }
             catch (Exception ex)
@@ -1013,31 +1074,31 @@ namespace BackendGUI
             }
         }
 
-        private async void btnFinishPreparation_Click(object sender, EventArgs e)
+        private   void btnFinishPreparation_Click(object sender, EventArgs e)
         {
             if (_mesData.ResourceStatusDetails?.Reason.Name == "Maintenance") return;
-            var result = await Mes.SetResourceStatus(_mesData, "BE - Productive Time", "Pass");
-            await GetStatusOfResource();
+            var result =   Mes.SetResourceStatus(_mesData, "BE - Productive Time", "Pass");
+              GetStatusOfResource();
             if (result)
             {
                 btnFinishPreparation.Enabled = false;
                 btnStartPreparation.Enabled = true;
-                await SetBackendState(BackEndState.ScanUnitSerialNumber);
+                  SetBackendState(BackEndState.ScanUnitSerialNumber);
             }
         }
 
-        private async void btnStartPreparation_Click(object sender, EventArgs e)
+        private   void btnStartPreparation_Click(object sender, EventArgs e)
         {
             ClearPo();
             if (_mesData.ResourceStatusDetails?.Reason?.Name == "Maintenance") return;
             if (_mesData.ResourceStatusDetails?.Reason?.Name == "Planned Maintenance") return;
 
             _mesData.SetManufacturingOrder(null);
-            var result = await Mes.SetResourceStatus(_mesData, "BE - Planned Downtime", "Preparation");
-            await GetStatusOfResource();
+            var result =   Mes.SetResourceStatus(_mesData, "BE - Planned Downtime", "Preparation");
+              GetStatusOfResource();
             if (result)
             {
-                await SetBackendState(BackEndState.WaitPreparation);
+                  SetBackendState(BackEndState.WaitPreparation);
                 btnFinishPreparation.Enabled = true;
                 btnStartPreparation.Enabled = false;
             }
@@ -1093,18 +1154,18 @@ namespace BackendGUI
             }
         }
 
-        private async Task AsyncClosing()
+        private   void  Closing()
         {
             if (_mesUnitCounter != null)
             {
-                await _mesUnitCounter.StopPoll();
+                  _mesUnitCounter.StopPoll();
             }
 
             _allowClose = true;
             Close();
         }
 
-        private async void Main_FormClosing(object sender, FormClosingEventArgs e)
+        private   void Main_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (!_allowClose)
             {
@@ -1125,7 +1186,7 @@ namespace BackendGUI
             }
 
             e.Cancel = true;
-            await AsyncClosing();
+               Closing();
         }
 
         private void btnCallMaintenance_KeyPress(object sender, KeyPressEventArgs e)
@@ -1133,24 +1194,36 @@ namespace BackendGUI
             e.Handled = true;
         }
 
-        private async void btnSynchronize_Click(object sender, EventArgs e)
+        private void SyncWorkerProgress(object sender, ProgressChangedEventArgs e)
         {
-            if (_mesData == null) return;
-            if (_mesData.ManufacturingOrder == null) return;
-            lblLoading.Visible = true;
 
-            var temp = await Mes.GetFinishGoodRecordSyncWithServer(_mesData,
-                _mesData.ManufacturingOrder?.Name.ToString());
-            var data = temp.ToList();
+        }
 
-
-            var list = await Mes.FinishGoodToFinishedGood(data);
+        private void SyncWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            var data = (List<IFinishGoodRecord>)e.Result;
+            var list = Mes.FinishGoodToFinishedGood(data);
             _bindingList = new BindingList<FinishedGood>(list);
             finishedGoodBindingSource.DataSource = _bindingList;
             kryptonDataGridView1.DataSource = finishedGoodBindingSource;
             Tb_FinishedGoodCounter.Text = list.Length.ToString();
             lblLoading.Visible = false;
         }
+        private void SyncDoWork(object sender, DoWorkEventArgs e)
+        {
+            var temp = Mes.GetFinishGoodRecordSyncWithServer(_mesData, _mesData.ManufacturingOrder?.Name.ToString()).Result;
+            var data = temp == null ? new List<IFinishGoodRecord>() : temp.ToList();
+            e.Result = data;
+        }
+        private void btnSynchronize_Click(object sender, EventArgs e)
+        {
+            if (_syncWorker.IsBusy) return;
+            if (_mesData == null) return;
+            if (_mesData.ManufacturingOrder == null) return;
+            lblLoading.Visible = true;
+            _syncWorker.RunWorkerAsync();
+        }
+
 
         private void kryptonDataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
