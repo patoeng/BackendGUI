@@ -405,7 +405,7 @@ namespace BackendGUI
                             Tb_ProductDesc.Text = oContainerStatus.ProductDescription?.Value;
 
                             var img =   Mes.GetImage(_mesData, oContainerStatus.Product.Name);
-                            pictureBox1.ImageLocation = img.Identifier.Value;
+                            pictureBox1.ImageLocation = img?.Identifier?.Value;
 
                             if (_mesUnitCounter != null)
                             {
@@ -449,7 +449,7 @@ namespace BackendGUI
                         break;
                     }
 
-                      SetBackendState(BackEndState.UnitNotFound);
+                    SetBackendState(BackEndState.UnitNotFound);
                     break;
                 case BackEndState.UnitNotFound:
                     _readScanner = false;
