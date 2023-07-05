@@ -30,11 +30,12 @@ namespace BackendGUI
 
 #if MiniMe
             var name = "Backend Minime";
-            Text = Mes.AddVersionNumber(name);
 #elif Ariel
             var name = "Backend Ariel";
-            Text = Mes.AddVersionNumber(name);
+#elif Gaia
+            var name = "Backend GAIA";
 #endif
+            Text = name + @" V1.2";
             _mesData = new Mes("Repair", AppSettings.Resource, name);
 
             lbTitle.Text = AppSettings.Resource;
